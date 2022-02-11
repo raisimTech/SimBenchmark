@@ -145,9 +145,9 @@ ArticulatedSystemHandle DartSim::addArticulatedSystem(std::string nm,
                                                                             true));
         break;
       case benchmark::object::Shape::Mesh:
-      RAIFATAL("mesh collision body is not supported yet");
+       RSFATAL("mesh collision body is not supported yet");
         break;
-      default: RAIFATAL("unsupported type: ");
+      default:  RSFATAL("unsupported type: ");
         break;
     }
     processGraphicalObject(handle.alternateVisual().back(), std::get<2>(handle->visColObj[i]));
@@ -176,11 +176,11 @@ void DartSim::loop(double realTimeFactor) {
 }
 
 void DartSim::loop(double dt, double realTimeFactor) {
-  RAIFATAL("use setTimeStep(double dt) + loop(double realTimeFactor) instead")
+   RSFATAL("use setTimeStep(double dt) + loop(double realTimeFactor) instead")
 }
 
 void DartSim::integrate(double dt) {
-  RAIFATAL("use setTimeStep(double dt) + integrate() instead")
+   RSFATAL("use setTimeStep(double dt) + integrate() instead")
 }
 
 void DartSim::setERP(double erp, double erp2, double frictionErp) {
@@ -192,7 +192,7 @@ int DartSim::getNumObject() {
 }
 
 void DartSim::updateFrame() {
-  RAIFATAL_IF(!gui_, "use different constructor for visualization")
+   RSFATAL_IF(!gui_, "use different constructor for visualization")
   const bool showAlternateGraphicsIfexists = gui_->getCustomToggleState(3);
 
   for (auto &as : asHandles_) {
@@ -270,7 +270,7 @@ void DartSim::updateFrame() {
     }
   }
 
-//  rai_sim::Mat<3, 3> rot;
+//  raisim::Mat<3, 3> rot;
 //  for (auto sb : comHandles_) {
 //    sb->getPosition_W(bodyPosition);
 //    sb->getRotationMatrix(rot);
@@ -422,11 +422,11 @@ int DartSim::getWorldNumContacts() {
 }
 
 void DartSim::integrate1(double dt) {
-  RAIFATAL("not supported for dart")
+   RSFATAL("not supported for dart")
 }
 
 void DartSim::integrate2(double dt) {
-  RAIFATAL("not supported for dart")
+   RSFATAL("not supported for dart")
 }
 
 } // dart_sim

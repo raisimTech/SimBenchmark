@@ -5,7 +5,7 @@
 #ifndef BENCHMARK_DARTBENCHMARK_HPP
 #define BENCHMARK_DARTBENCHMARK_HPP
 
-#include <raiCommon/rai_utils.hpp>
+
 #include <boost/program_options.hpp>
 #include "odeSim/src/OdeWorld.hpp"
 
@@ -65,7 +65,7 @@ void getOptionsFromArg(int argc, const char **argv, po::options_description &des
       options.solverName = "QUICK";
     }
     else {
-      RAIFATAL("invalid solver input")
+       RSFATAL("invalid solver input")
     }
   }
 }

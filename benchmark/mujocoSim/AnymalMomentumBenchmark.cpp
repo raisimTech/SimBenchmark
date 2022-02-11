@@ -93,7 +93,7 @@ double simulationLoop(bool timer = true, bool error = true) {
     // data save
     if(error) {
       Eigen::Vector3d ballM = sim->getSingleBodyHandle(0)->getLinearMomentum();
-      Eigen::Vector3d totalM = sim->getLinearMomentumInCartesianSpace();
+      Eigen::Vector3d totalM = sim->getLinearMomentum();
 
       benchmark::anymal::zerogravity::data.ballMomentum.push_back(
           ballM
@@ -124,7 +124,7 @@ int main(int argc, const char* argv[]) {
   benchmark::anymal::zerogravity::getParamsFromYAML(benchmark::anymal::zerogravity::getYamlpath().c_str(),
                                                     benchmark::MUJOCO);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "=======================" << std::endl
                 << "Simulator: MUJOCO" << std::endl
                 << "GUI      : " << benchmark::anymal::zerogravity::options.gui << std::endl
@@ -155,7 +155,7 @@ int main(int argc, const char* argv[]) {
                                              time,
                                              error);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "CPU Timer : " << time << std::endl
                 << "Mean Error: " << error << std::endl
                 << "======================="

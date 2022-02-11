@@ -30,8 +30,8 @@ int main() {
   sim.setTimeStep(0.01);
   sim.loop(1.0);
 
-  RAIINFO(sim.getSingleBodyHandle(1)->getKineticEnergy())
-  RAIINFO(sim.getSingleBodyHandle(1)->getPotentialEnergy({0, 0, -9.8}))
+   RSINFO(sim.getSingleBodyHandle(1)->getKineticEnergy())
+   RSINFO(sim.getSingleBodyHandle(1)->getPotentialEnergy({0, 0, -9.8}))
 
   return 0;
 }

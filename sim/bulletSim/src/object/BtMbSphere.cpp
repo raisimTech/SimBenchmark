@@ -17,7 +17,7 @@ bullet_mb_sim::object::BtMbSphere::BtMbSphere(double radius, double mass, b3Robo
     arg.m_shapeType = GEOM_SPHERE;
     arg.m_radius = radius;
     shapeId = api_->createCollisionShape(GEOM_SPHERE, arg);
-    RAIFATAL_IF(shapeId ==  -1, "Checkerboard shape creation error")
+     RSFATAL_IF(shapeId ==  -1, "Checkerboard shape creation error")
   }
 
   // create body
@@ -36,19 +36,19 @@ bullet_mb_sim::object::BtMbSphere::BtMbSphere(double radius, double mass, b3Robo
     dynarg.m_spinningFriction = 0;
     dynarg.m_linearDamping = 0;
     dynarg.m_angularDamping = 0;
-    RAIFATAL_IF(!api_->changeDynamics(objectId_, -1, dynarg), "changeDynamics failed")
+     RSFATAL_IF(!api_->changeDynamics(objectId_, -1, dynarg), "changeDynamics failed")
   }
 
   // inertia
   {
     b3DynamicsInfo info;
-    RAIFATAL_IF(!api_->getDynamicsInfo(objectId_, -1, &info), "getDynamicsInfo failed")
+     RSFATAL_IF(!api_->getDynamicsInfo(objectId_, -1, &info), "getDynamicsInfo failed")
     localInertia_.setZero();
     localInertia_[0] = info.m_localInertialDiagonal[0];
     localInertia_[4] = info.m_localInertialDiagonal[1];
     localInertia_[8] = info.m_localInertialDiagonal[2];
   }
-  RAIFATAL_IF(objectId_ ==  -1, "Checkerboard body creation error")
+   RSFATAL_IF(objectId_ ==  -1, "Checkerboard body creation error")
 }
 
 } // object

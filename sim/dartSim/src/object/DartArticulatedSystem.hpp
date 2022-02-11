@@ -60,7 +60,7 @@ class DartArticulatedSystem: public DartObject,
 
   virtual void setColor(Eigen::Vector4d color)  override ;
 
-  const Eigen::Map<Eigen::Matrix<double, 3, 1>> getLinearMomentumInCartesianSpace() override;
+  const Eigen::Map<Eigen::Matrix<double, 3, 1>> getLinearMomentum() override;
 
   double getTotalMass() override;
 

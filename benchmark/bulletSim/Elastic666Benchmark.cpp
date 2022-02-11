@@ -181,7 +181,7 @@ int main(int argc, const char* argv[]) {
   benchmark::elasticsixsixsix::getParamsFromYAML(benchmark::elasticsixsixsix::getYamlpath().c_str(),
                                                  benchmark::BULLET);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "=======================" << std::endl
                 << "Simulator: BULLET" << std::endl
                 << "GUI      : " << benchmark::elasticsixsixsix::options.gui << std::endl
@@ -216,7 +216,7 @@ int main(int argc, const char* argv[]) {
                                           time,
                                           error);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "CPU time   : " << time << std::endl
                 << "mean error : " << error << std::endl
                 << "=======================" << std::endl

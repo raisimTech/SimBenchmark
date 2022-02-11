@@ -6,7 +6,7 @@
 
 #include "AnymalPDBenchmark.hpp"
 #include "BtMbBenchmark.hpp"
-#include "raiCommon/utils/StopWatch.hpp"
+
 
 bullet_mb_sim::BtMbSim *sim;
 std::vector<bullet_mb_sim::ArticulatedSystemHandle> anymals;
@@ -68,8 +68,7 @@ void resetWorld() {
 
   sim->setGravity({0, 0, benchmark::anymal::params.g});
 
-  if(benchmark::anymal::options.gui)
-    sim->cameraFollowObject(checkerboard, {1.0, 1.0, 1.0});
+
 }
 
 void simulationLoop() {
@@ -164,7 +163,7 @@ int main(int argc, const char* argv[]) {
   benchmark::anymal::getParamsFromYAML(benchmark::anymal::getYamlpath().c_str(),
                                        benchmark::BULLET);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "=======================" << std::endl
                 << "Simulator: " << benchmark::bulletmultibody::options.simName << std::endl
                 << "GUI      : " << benchmark::anymal::options.gui << std::endl
@@ -183,7 +182,7 @@ int main(int argc, const char* argv[]) {
   if(benchmark::bulletmultibody::options.profiling)
     sim->stopBulletProfiling(profileID);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "-----------------------" << std::endl
                 << "Contacts : " << sim->getWorldNumContacts() << std::endl
                 << "======================="

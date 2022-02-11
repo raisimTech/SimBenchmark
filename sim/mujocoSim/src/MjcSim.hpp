@@ -85,7 +85,7 @@ class MjcSim: public benchmark::WorldRG {
   int getWorldNumContacts() override ;
   int getNumObject() override ;
 
-  const Eigen::Map<Eigen::Matrix<double, 3, 1>> getLinearMomentumInCartesianSpace();
+  const Eigen::Map<Eigen::Matrix<double, 3, 1>> getLinearMomentum();
   double getTotalMass();
 
   /**

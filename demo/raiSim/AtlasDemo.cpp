@@ -1,7 +1,7 @@
 //
 // Created by jhwangbo on 04/12/17.
 //
-#include <raiSim/World_RG.hpp>
+#include "raisim/World.hpp"
 #include "raiSim/StopWatch.hpp"
 
 #define GUI
@@ -14,14 +14,14 @@ int main() {
   urdfPath += "../../../res/demo/ode-rai-dart/Atlas/robot.urdf";
 
 #ifdef GUI
-  rai_sim::World_RG sim(800, 600, 0.2, rai_sim::NO_BACKGROUND);
+  raisim::World_RG sim(800, 600, 0.2, raisim::NO_BACKGROUND);
 #else
-  rai_sim::World_RG sim;
+  raisim::World_RG sim;
 #endif
   sim.setERP(0);
 
   auto atlas = sim.addArticulatedSystem(urdfPath);
-  auto checkerBoard = sim.addCheckerboard(2, 100, 100, 0.1, -1, rai_sim::GRID);
+  auto checkerBoard = sim.addCheckerboard(2, 100, 100, 0.1, -1, raisim::GRID);
 
   // states
   Eigen::VectorXd gc(atlas->getGeneralizedCoordinateDim());

@@ -94,7 +94,7 @@ void BtMbSingleBodyObject::setOrientation(Eigen::Matrix3d rotationMatrix) {
 }
 
 void BtMbSingleBodyObject::setOrientationRandom() {
-  RAIFATAL("setOrientationRandom not implemented yet")
+   RSFATAL("setOrientationRandom not implemented yet")
 }
 
 void BtMbSingleBodyObject::setPose(Eigen::Vector3d originPosition, Eigen::Quaterniond quaternion) {

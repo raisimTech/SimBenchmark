@@ -29,9 +29,9 @@ BtMbCheckerBoard::BtMbCheckerBoard(double xLength,
       arg.m_halfExtents = {xLength * 0.5, yLength * 0.5, 10.0};
       shapeId = api_->createCollisionShape(GEOM_BOX, arg);
     } else {
-      RAIFATAL("invalid shape input")
+       RSFATAL("invalid shape input")
     }
-    RAIFATAL_IF(shapeId ==  -1, "Checkerboard shape creation error")
+     RSFATAL_IF(shapeId ==  -1, "Checkerboard shape creation error")
   }
 
   // create body
@@ -50,7 +50,7 @@ BtMbCheckerBoard::BtMbCheckerBoard(double xLength,
     dynarg.m_spinningFriction = 0;
     dynarg.m_linearDamping = 0;
     dynarg.m_angularDamping = 0;
-    RAIFATAL_IF(!api_->changeDynamics(objectId_, -1, dynarg), "changeDynamics failed")
+     RSFATAL_IF(!api_->changeDynamics(objectId_, -1, dynarg), "changeDynamics failed")
   }
 
   if(shape == bo::BOX_SHAPE) {
@@ -72,7 +72,7 @@ BtMbCheckerBoard::BtMbCheckerBoard(double xLength,
 
   // inertia
   localInertia_.setZero();
-  RAIFATAL_IF(objectId_ ==  -1, "Checkerboard body creation error")
+   RSFATAL_IF(objectId_ ==  -1, "Checkerboard body creation error")
 }
 
 void BtMbCheckerBoard::getPosition_W(benchmark::Vec<3> &pos_w) {

@@ -20,7 +20,7 @@ mujoco_sim::MjcWorld::MjcWorld(const char *modelPath,
   worldModel_ = mj_loadXML(modelPath, NULL, error, 1000);
   if( !worldModel_ )
   {
-    RAIFATAL(error);
+     RSFATAL(error);
   }
 
   // set solver
@@ -123,7 +123,7 @@ object::MjcCheckerBoard *MjcWorld::addCheckerboard(double gridSize,
                                              bo::CheckerboardShape shape,
                                              int bodyId,
                                              int geomId) {
-  RAIFATAL_IF(shape == bo::BOX_SHAPE, "box shape ground is not supported")
+   RSFATAL_IF(shape == bo::BOX_SHAPE, "box shape ground is not supported")
 
   object::MjcCheckerBoard *checkerBoard =
       new object::MjcCheckerBoard(xLength, yLength, worldData_, worldModel_, bodyId, geomId);
@@ -179,7 +179,7 @@ const EigenVec MjcWorld::getGeneralizedForce() {
 }
 
 void MjcWorld::setGeneralizedCoordinate(const Eigen::VectorXd &jointState) {
-  RAIFATAL_IF(jointState.size() != dimGenCoord_, "invalid generalized coordinate input")
+   RSFATAL_IF(jointState.size() != dimGenCoord_, "invalid generalized coordinate input")
   for(int i = 0; i < dimGenCoord_; i++) {
     generalizedCoordinate_[i] = jointState[i];
     worldData_->qpos[i] = jointState[i];
@@ -187,7 +187,7 @@ void MjcWorld::setGeneralizedCoordinate(const Eigen::VectorXd &jointState) {
 }
 
 void MjcWorld::setGeneralizedCoordinate(std::initializer_list<double> jointState) {
-  RAIFATAL_IF(jointState.size() != dimGenCoord_, "invalid generalized coordinate input")
+   RSFATAL_IF(jointState.size() != dimGenCoord_, "invalid generalized coordinate input")
   for(int i = 0; i < dimGenCoord_; i++) {
     generalizedCoordinate_[i] = jointState.begin()[i];
     worldData_->qpos[i] = jointState.begin()[i];
@@ -195,7 +195,7 @@ void MjcWorld::setGeneralizedCoordinate(std::initializer_list<double> jointState
 }
 
 void MjcWorld::setGeneralizedVelocity(const Eigen::VectorXd &jointVel) {
-  RAIFATAL_IF(jointVel.size() != dof_, "invalid generalized velocity input")
+   RSFATAL_IF(jointVel.size() != dof_, "invalid generalized velocity input")
   for(int i = 0; i < dof_; i++) {
     generalizedVelocity_[i] = jointVel[i];
     worldData_->qvel[i] = jointVel[i];
@@ -203,7 +203,7 @@ void MjcWorld::setGeneralizedVelocity(const Eigen::VectorXd &jointVel) {
 }
 
 void MjcWorld::setGeneralizedVelocity(std::initializer_list<double> jointVel) {
-  RAIFATAL_IF(jointVel.size() != dof_, "invalid generalized velocity input")
+   RSFATAL_IF(jointVel.size() != dof_, "invalid generalized velocity input")
   for(int i = 0; i < dof_; i++) {
     generalizedVelocity_[i] = jointVel.begin()[i];
     worldData_->qvel[i] = jointVel.begin()[i];
@@ -211,7 +211,7 @@ void MjcWorld::setGeneralizedVelocity(std::initializer_list<double> jointVel) {
 }
 
 void MjcWorld::setGeneralizedForce(std::initializer_list<double> tau) {
-  RAIFATAL_IF(tau.size() != dof_, "invalid generalized force input")
+   RSFATAL_IF(tau.size() != dof_, "invalid generalized force input")
   for(int i = 0; i < dof_; i++) {
     generalizedForce_[i] = tau.begin()[i];
     worldData_->qfrc_applied[i] = tau.begin()[i];
@@ -219,15 +219,15 @@ void MjcWorld::setGeneralizedForce(std::initializer_list<double> tau) {
 }
 
 void MjcWorld::setGeneralizedForce(const Eigen::VectorXd &tau) {
-  RAIFATAL_IF(tau.size() != dof_, "invalid generalized force input")
+   RSFATAL_IF(tau.size() != dof_, "invalid generalized force input")
   for(int i = 0; i < dof_; i++) {
     generalizedForce_[i] = tau[i];
     worldData_->qfrc_applied[i] = tau[i];
   }
 }
 void MjcWorld::getState(Eigen::VectorXd &genco, Eigen::VectorXd &genvel) {
-  RAIFATAL_IF(genco.size() != dimGenCoord_, "invalid generalized coordinate input")
-  RAIFATAL_IF(genvel.size() != dof_, "invalid generalized velocity input")
+   RSFATAL_IF(genco.size() != dimGenCoord_, "invalid generalized coordinate input")
+   RSFATAL_IF(genvel.size() != dof_, "invalid generalized velocity input")
 
   for(int i = 0; i < dof_; i++) {
     generalizedVelocity_[i] = worldData_->qvel[i];
@@ -241,8 +241,8 @@ void MjcWorld::getState(Eigen::VectorXd &genco, Eigen::VectorXd &genvel) {
 }
 
 void MjcWorld::setState(const Eigen::VectorXd &genco, const Eigen::VectorXd &genvel) {
-  RAIFATAL_IF(genco.size() != dimGenCoord_, "invalid generalized coordinate input")
-  RAIFATAL_IF(genvel.size() != dof_, "invalid generalized velocity input")
+   RSFATAL_IF(genco.size() != dimGenCoord_, "invalid generalized coordinate input")
+   RSFATAL_IF(genvel.size() != dof_, "invalid generalized velocity input")
 
   for(int i = 0; i < dof_; i++) {
     generalizedVelocity_[i] = genvel[i];
@@ -301,7 +301,7 @@ void MjcWorld::integrate2() {
   mj_step2(worldModel_, worldData_);
 }
 
-const Eigen::Map<Eigen::Matrix<double, 3, 1>> MjcWorld::getLinearMomentumInCartesianSpace() {
+const Eigen::Map<Eigen::Matrix<double, 3, 1>> MjcWorld::getLinearMomentum() {
   Eigen::Vector3d linearMomentum;
   linearMomentum.setZero();
   for(int i = 0; i < objectList_.size(); i++) {
@@ -323,13 +323,13 @@ double MjcWorld::getTotalMass() {
 }
 
 void mujoco_sim::MjcWorld::integrate(double dt) {
-  RAIFATAL("use setTimeStep(double dt) + integrate() instead")
+   RSFATAL("use setTimeStep(double dt) + integrate() instead")
 }
 void MjcWorld::integrate1(double dt) {
-  RAIFATAL("use setTimeStep(double dt) + integrate1() instead")
+   RSFATAL("use setTimeStep(double dt) + integrate1() instead")
 }
 void MjcWorld::integrate2(double dt) {
-  RAIFATAL("use setTimeStep(double dt) + integrate2() instead")
+   RSFATAL("use setTimeStep(double dt) + integrate2() instead")
 }
 void MjcWorld::forwardKinematics() {
   mj_forward(worldModel_, worldData_);

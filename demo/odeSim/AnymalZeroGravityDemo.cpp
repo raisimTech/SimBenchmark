@@ -3,7 +3,7 @@
 //
 
 #include <OdeSim.hpp>
-#include "raiCommon/utils/StopWatch.hpp"
+
 
 #define URDFPATH ROOTPATH "/res/demo/ode-rai-dart/ANYmal-nomesh/robot.urdf"
 //#define VIDEO_SAVE_MODE
@@ -39,7 +39,7 @@ int main() {
         sim.integrate(0.005);
     }
 
-    RAIINFO(anymal->getGeneralizedVelocity())
+     RSINFO(anymal->getGeneralizedVelocity())
     return 0;
 }
 

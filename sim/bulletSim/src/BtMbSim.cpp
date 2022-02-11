@@ -97,9 +97,9 @@ ArticulatedSystemHandle BtMbSim::addArticulatedSystem(std::string nm,
                                                                             true));
         break;
       case benchmark::object::Shape::Mesh:
-      RAIFATAL("mesh collision body is not supported yet");
+       RSFATAL("mesh collision body is not supported yet");
         break;
-      default: RAIFATAL("unsupported type: ");
+      default:  RSFATAL("unsupported type: ");
         break;
     }
     processGraphicalObject(handle.alternateVisual().back(), std::get<2>(handle->visColObj[i]));
@@ -167,7 +167,7 @@ int BtMbSim::getWorldNumContacts() {
   return int(world_.contactProblemList_.size());
 }
 void BtMbSim::updateFrame() {
-  RAIFATAL_IF(!gui_, "use different constructor for visualization")
+   RSFATAL_IF(!gui_, "use different constructor for visualization")
   const bool showAlternateGraphicsIfexists = gui_->getCustomToggleState(3);
 
   for (auto &as : asHandles_) {
@@ -241,7 +241,7 @@ void BtMbSim::updateFrame() {
     }
   }
 
-//  rai_sim::Mat<3, 3> rot;
+//  raisim::Mat<3, 3> rot;
 //  for (auto sb : comHandles_) {
 //    sb->getPosition_W(bodyPosition);
 //    sb->getRotationMatrix(rot);
@@ -385,8 +385,8 @@ void BtMbSim::setSolverParameter(double solverResidualThreshold, int solverItera
 }
 
 void BtMbSim::cameraFollowObject(ArticulatedSystemHandle followingObject, Eigen::Vector3d relativePosition) {
-  RAIFATAL_IF(!gui_, "RaiSim is running without visualization")
-  RAIFATAL_IF(followingObject.visual().empty(), "could not find visual objects")
+   RSFATAL_IF(!gui_, "RaiSim is running without visualization")
+   RSFATAL_IF(followingObject.visual().empty(), "could not find visual objects")
   WorldRG::cameraFollowObject(followingObject.visual()[0], relativePosition);
 }
 

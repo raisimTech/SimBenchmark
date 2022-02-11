@@ -5,7 +5,7 @@
 #include <boost/program_options.hpp>
 
 #include "MjcSim.hpp"
-#include "raiCommon/utils/StopWatch.hpp"
+
 
 //#define VIDEO_SAVE_MODE
 
@@ -74,7 +74,7 @@ int main(int argc, const char* argv[]) {
     sim.integrate2();
   }
 
-  RAIINFO("initial E = " << E0)
+   RSINFO("initial E = " << E0)
   showplot(E0);
   return 0;
 }

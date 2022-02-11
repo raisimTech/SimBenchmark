@@ -5,7 +5,7 @@
 #ifndef BENCHMARK_ANYMAL_HPP
 #define BENCHMARK_ANYMAL_HPP
 
-#include <raiCommon/rai_utils.hpp>
+
 #include <yaml-cpp/yaml.h>
 #include <boost/program_options.hpp>
 
@@ -74,26 +74,7 @@ namespace benchmark::atlas {
             steptime(i, 0) = stepTimeList[i] * 1000;
           }
 
-          if(options.plot) {
-            Eigen::MatrixXd tdata(n, 1);        // time
-
-            for(int i = 0; i < n; i++) {
-              tdata(i, 0) = i * params.dt;
-            }
-
-            rai::Utils::Graph::FigProp2D figure1properties("time", "num contacts", "num contacts");
-            rai::Utils::graph->figure(1, figure1properties);
-            rai::Utils::graph->appendData(1, tdata.data(), numcontact.data(), n, "number");
-            rai::Utils::graph->drawFigure(1);
-
-            rai::Utils::Graph::FigProp2D figure2properties("time", "step time", "step time");
-            rai::Utils::graph->figure(2, figure2properties);
-            rai::Utils::graph->appendData(2, tdata.data(), steptime.data(), n, "msec");
-            rai::Utils::graph->drawFigure(2);
-            rai::Utils::graph->waitForEnter();
-          }
-
-          RAIINFO(
+           RSINFO(
                   std::endl << "-----------------------" << std::endl
                             << "Contacts : " << numcontact.mean() << std::endl
                             << "=======================" << std::endl
@@ -238,7 +219,7 @@ namespace benchmark::atlas {
 
       // save video
       if(vm.count("video")) {
-        RAIFATAL_IF(!options.gui, "GUI should be on to save a video")
+         RSFATAL_IF(!options.gui, "GUI should be on to save a video")
         options.saveVideo = true;
       }
 
@@ -302,7 +283,7 @@ namespace benchmark::atlas {
         case benchmark::DART:
           break;
         default:
-        RAIFATAL("invalid simulator value")
+         RSFATAL("invalid simulator value")
       }
     }
 

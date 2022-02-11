@@ -38,8 +38,8 @@ int main(int argc, const char* argv[]) {
     }
   }
 
-  RAIINFO(std::endl << "genvel = " << std::endl << robot->getGeneralizedVelocity());
-  RAIINFO(std::endl << "momentum = " << std::endl << robot->getLinearMomentumInCartesianSpace());
-  RAIINFO(std::endl << "energy = " << std::endl << robot->getEnergy({0, 0, -9.81}));
+   RSINFO(std::endl << "genvel = " << std::endl << robot->getGeneralizedVelocity());
+   RSINFO(std::endl << "momentum = " << std::endl << robot->getLinearMomentum());
+   RSINFO(std::endl << "energy = " << std::endl << robot->getEnergy({0, 0, -9.81}));
   return 0;
 }

@@ -2,7 +2,7 @@
 // Created by kangd on 13.02.18.
 //
 
-#include <raiSim/World_RG.hpp>
+#include "raisim/World.hpp"
 
 //#define SIM_TIME_MODE
 //#define VIDEO_SAVE_MODE
@@ -15,21 +15,21 @@ int main() {
   urdfPath += "../../../res/ANYmal-nomesh/robot.urdf";
 
 #if defined(SIM_TIME_MODE)
-  rai_sim::World_RG sim;
+  raisim::World_RG sim;
 #else
-  rai_sim::World_RG sim(800, 600, 0.5, rai_sim::NO_BACKGROUND);
+  raisim::World_RG sim(800, 600, 0.5, raisim::NO_BACKGROUND);
 #endif
   sim.setGravity({0, 0, -9.8});
   sim.setTimeStep(0.005);
 
   // add objects
-  auto checkerboard = sim.addCheckerboard(2, 100, 100, 0.1, -1, rai_sim::GRID);
+  auto checkerboard = sim.addCheckerboard(2, 100, 100, 0.1, -1, raisim::GRID);
 
   Eigen::VectorXd jointNominalConfig(19);
   Eigen::VectorXd jointState(18), jointVel(18), jointForce(18);
 
   jointNominalConfig << 0, 0, 0, 0, 0, 0, 0, 0.03, 0.4, -0.8, -0.03, 0.4, -0.8, 0.03, -0.4, 0.8, -0.03, -0.4, 0.8;
-  std::vector<rai_sim::ArticulatedSystemHandle> animals;
+  std::vector<raisim::ArticulatedSystem*> animals;
 
   auto anymal = sim.addArticulatedSystem(urdfPath);
   anymal->setGeneralizedCoordinate({0, 0, 0.54,

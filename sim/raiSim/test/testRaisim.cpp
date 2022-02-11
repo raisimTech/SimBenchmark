@@ -1,7 +1,7 @@
 //
 // Created by kangd on 19.11.17.
 //
-#include <raiSim/World_RG.hpp>
+#include "raisim/World.hpp"
 
 #define VISUALIZER_TEST
 
@@ -11,7 +11,7 @@ int main() {
     std::string path = "/tmp";
     rai::Utils::timer->setLogPath(path);
 
-    rai_sim::World_RG raiSim(800, 600, 0.5);
+    raisim::World_RG raiSim(800, 600, 0.5);
 
     raiSim.setGravity({0,0,0});
     raiSim.setLightPosition(30, 0, 10);
@@ -42,7 +42,7 @@ int main() {
     float longLen = 2;
     float heightLen = 1;
 
-    std::vector<rai_sim::SingleBodyHandle> objectPtrList;
+    std::vector<raisim::SingleBodyObject*> objectPtrList;
     for(int i = 0; i < 10; i++) {
         for(int j = 0; j < 20; j++) {
             auto block = raiSim.addBox(shortLen, longLen, heightLen, 1.0);
@@ -65,5 +65,5 @@ int main() {
     // press 'q' key to quit
     raiSim.loop();
 
-    RAIINFO("demoTower ended");
+     RSINFO("demoTower ended");
 }

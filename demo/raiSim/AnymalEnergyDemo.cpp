@@ -5,7 +5,7 @@
 #include <boost/program_options.hpp>
 
 #include "raiSim/World_RG.hpp"
-#include "raiCommon/utils/StopWatch.hpp"
+
 
 //#define VIDEO_SAVE_MODE
 
@@ -21,9 +21,9 @@ int main(int argc, const char* argv[]) {
     urdfPath.erase(urdfPath.size() - 1, 1);
   urdfPath += "../../../res/ANYmal-energy/robot.urdf";
 
-  rai_sim::World_RG sim(800, 600, 0.5, rai_sim::NO_BACKGROUND);
+  raisim::World_RG sim(800, 600, 0.5, raisim::NO_BACKGROUND);
 
-  auto checkerboard = sim.addCheckerboard(2, 100, 100, 0.1, 1, -1, rai_sim::GRID);
+  auto checkerboard = sim.addCheckerboard(2, 100, 100, 0.1, 1, -1, raisim::GRID);
 
   auto anymal = sim.addArticulatedSystem(urdfPath, 1, 0);
   anymal->setGeneralizedCoordinate(
@@ -54,7 +54,7 @@ int main(int argc, const char* argv[]) {
     sim.integrate2(dt);
   }
 
-  RAIINFO("initial E = " << E0)
+   RSINFO("initial E = " << E0)
   showplot(E0);
   return 0;
 }

@@ -5,7 +5,7 @@
 #ifndef BENCHMARK_DARTBENCHMARK_HPP
 #define BENCHMARK_DARTBENCHMARK_HPP
 
-#include <raiCommon/rai_utils.hpp>
+
 #include <boost/program_options.hpp>
 
 namespace po = boost::program_options;

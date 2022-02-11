@@ -85,7 +85,7 @@ double simulationLoop(bool timer = true, bool error = true) {
           balls[0]->getLinearMomentum()
       );
       benchmark::anymal::zerogravity::data.anymalMomentum.push_back(
-          anymals[0]->getLinearMomentumInCartesianSpace()
+          anymals[0]->getLinearMomentum()
       );
     }
 
@@ -110,7 +110,7 @@ int main(int argc, const char* argv[]) {
   benchmark::anymal::zerogravity::getParamsFromYAML(benchmark::anymal::zerogravity::getYamlpath().c_str(),
                                                     benchmark::DART);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "=======================" << std::endl
                 << "Simulator: DART" << std::endl
                 << "GUI      : " << benchmark::anymal::zerogravity::options.gui << std::endl
@@ -144,7 +144,7 @@ int main(int argc, const char* argv[]) {
                                              time,
                                              error);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "CPU Timer : " << time << std::endl
                 << "Mean Error: " << error << std::endl
                 << "======================="

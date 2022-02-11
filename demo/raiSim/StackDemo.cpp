@@ -2,7 +2,7 @@
 // Created by kangd on 09.02.18.
 //
 
-#include <raiSim/World_RG.hpp>
+#include "raisim/World.hpp"
 
 enum Object {
     BOX,
@@ -12,7 +12,7 @@ enum Object {
 
 int main() {
 
-    rai_sim::World_RG sim(800, 600, 0.5, rai_sim::NO_BACKGROUND);
+    raisim::World_RG sim(800, 600, 0.5, raisim::NO_BACKGROUND);
     sim.setGravity({0, 0, -9.8});
     sim.setLightPosition(30, 0, 10);
 

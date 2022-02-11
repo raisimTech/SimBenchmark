@@ -208,7 +208,7 @@ int main(int argc, const char* argv[]) {
   benchmark::anymal::getParamsFromYAML(benchmark::anymal::getYamlpath().c_str(),
                                        benchmark::MUJOCO);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "=======================" << std::endl
                 << "Simulator: MUJOCO" << std::endl
                 << "GUI      : " << benchmark::anymal::options.gui << std::endl
@@ -223,7 +223,7 @@ int main(int argc, const char* argv[]) {
   resetWorld();
   simulationLoop();
 
-  RAIINFO(
+   RSINFO(
       std::endl << "-----------------------" << std::endl
                 << "Contacts : " << sim->getWorldNumContacts() << std::endl
                 << "======================="

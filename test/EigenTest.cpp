@@ -9,5 +9,5 @@ int main() {
   Eigen::Quaterniond quat1(0, 0, 0, 1);
   Eigen::Quaterniond quat2(0, 0, 0, 1);
   Eigen::Quaterniond result = quat1 * quat2;
-  RAIINFO(result.w() << result.x() << result.y() << result.z());
+   RSINFO(result.w() << result.x() << result.y() << result.z());
 }

@@ -21,7 +21,7 @@ int main() {
   mujoco_sim::MjcSim
       sim(1280, 720, 0.1, urdfPath.c_str(), keyPath.c_str(), benchmark::NO_BACKGROUND);
 
-  RAIINFO("number of blocks "<< sim.getNumObject()-1);
+   RSINFO("number of blocks "<< sim.getNumObject()-1);
 
   /// NOTE: dt = 0.01 is too large for realistic simulation
   const double dt = 0.001;  // (sec)

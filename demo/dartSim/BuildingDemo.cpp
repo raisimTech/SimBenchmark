@@ -63,7 +63,7 @@ int main() {
     objectPtrList.push_back(wall2);
   }
 
-  RAIINFO("number of blocks "<< objectPtrList.size());
+   RSINFO("number of blocks "<< objectPtrList.size());
 
   /// NOTE: dt = 0.01 is too large for realistic simulation
   const double dt = 0.001;  // (sec)

@@ -11,7 +11,6 @@
 #include "BenchmarkTest.hpp"
 
 namespace po = boost::program_options;
-namespace ru = rai::Utils;
 
 namespace benchmark::bouncing {
 
@@ -95,20 +94,6 @@ namespace benchmark::bouncing {
 
           for(int i = 0; i < n; i++) {
             energyErrorSq(i, 0) = pow(ballEnergy[i] - E,2);
-          }
-
-          if(options.plot) {
-            Eigen::MatrixXd tdata(n, 1);        // time
-
-            for(int i = 0; i < n; i++) {
-              tdata(i, 0) = i * benchmark::bouncing::options.dt;
-            }
-
-            rai::Utils::Graph::FigProp2D figure1properties("time", "squared energy error", "squared energy error");
-            rai::Utils::graph->figure(1, figure1properties);
-            rai::Utils::graph->appendData(1, tdata.data(), energyErrorSq.data(), n, "E error sq");
-            rai::Utils::graph->drawFigure(1);
-            rai::Utils::graph->waitForEnter();
           }
 
           return energyErrorSq.mean();
@@ -254,7 +239,7 @@ namespace benchmark::bouncing {
 
       // save video
       if(vm.count("video")) {
-        RAIFATAL_IF(!options.gui, "GUI should be on to save a video")
+         RSFATAL_IF(!options.gui, "GUI should be on to save a video")
         options.saveVideo = true;
       }
 
@@ -266,7 +251,7 @@ namespace benchmark::bouncing {
       // restitution coeff
       if(vm.count("e")) {
         options.e = vm["e"].as<double>();
-        RAIWARN_IF(options.e != 1, "only elastic collision analytic solution is supported")
+        RSWARN_IF(options.e != 1, "only elastic collision analytic solution is supported")
       }
 
       // plot option
@@ -341,27 +326,8 @@ namespace benchmark::bouncing {
         case benchmark::DART:
           break;
         default:
-        RAIFATAL("invalid simulator value")
+         RSFATAL("invalid simulator value")
       }
-    }
-
-/**
- * set up logger and timer log
- *
- * @param path directory path of log files
- * @param name name of log file
- */
-    void loggerSetup(std::string path, std::string name) {
-      // logger
-      ru::logger->setLogPath(path);
-      ru::logger->setLogFileName(name);
-      ru::logger->setOptions(ru::ONEFILE_FOR_ONEDATA);
-      ru::logger->addVariableToLog(1, "energy", "energy of balls");
-
-      // timer
-      std::string timer = name + "timer";
-      ru::timer->setLogPath(path);
-      ru::timer->setLogFileName(timer);
     }
 
     void printCSV(std::string filePath,

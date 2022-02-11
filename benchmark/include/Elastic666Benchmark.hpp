@@ -20,7 +20,6 @@
  */
 
 namespace po = boost::program_options;
-namespace ru = rai::Utils;
 
 namespace benchmark::elasticsixsixsix {
 
@@ -81,20 +80,6 @@ namespace benchmark::elasticsixsixsix {
 
           for(int i = 0; i < n; i++) {
             errorSq(i, 0) = error[i];
-          }
-
-          if(options.plot) {
-            Eigen::MatrixXd tdata(n, 1);        // time
-
-            for(int i = 0; i < n; i++) {
-              tdata(i, 0) = i * benchmark::elasticsixsixsix::options.dt;
-            }
-
-            rai::Utils::Graph::FigProp2D figure1properties("time", "squared error", "squared error");
-            rai::Utils::graph->figure(1, figure1properties);
-            rai::Utils::graph->appendData(1, tdata.data(), errorSq.data(), n, "error sq");
-            rai::Utils::graph->drawFigure(1);
-            rai::Utils::graph->waitForEnter();
           }
 
           return errorSq.mean();
@@ -205,7 +190,7 @@ namespace benchmark::elasticsixsixsix {
 
       // save video
       if(vm.count("video")) {
-        RAIFATAL_IF(!options.gui, "GUI should be on to save a video")
+         RSFATAL_IF(!options.gui, "GUI should be on to save a video")
         options.saveVideo = true;
       }
 
@@ -279,7 +264,7 @@ namespace benchmark::elasticsixsixsix {
         case benchmark::DART:
           break;
         default:
-        RAIFATAL("invalid simulator value")
+         RSFATAL("invalid simulator value")
       }
     }
 

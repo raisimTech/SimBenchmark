@@ -2,20 +2,17 @@
 // Created by kangd on 26.04.18.
 //
 
-#include <raiSim/World_RG.hpp>
+#include "raisim/World.hpp"
 
 #include "AtlasContactBenchmark.hpp"
-#include "raiCommon/utils/StopWatch.hpp"
 
-rai_sim::World_RG *sim;
-std::vector<rai_sim::ArticulatedSystemHandle> robots;
+
+raisim::World* sim;
+std::vector<raisim::ArticulatedSystem*> robots;
 po::options_description desc;
 
 void setupSimulation() {
-  if(benchmark::atlas::options.gui)
-    sim = new rai_sim::World_RG(800, 600, 0.1, rai_sim::NO_BACKGROUND);
-  else
-    sim = new rai_sim::World_RG();
+  sim = new raisim::World();
 
   // time step
   sim->setTimeStep(benchmark::atlas::params.dt);
@@ -26,7 +23,7 @@ void setupSimulation() {
 }
 
 void resetWorld() {
-  auto checkerboard = sim->addCheckerboard(2, 100, 100, 0.1, -1, rai_sim::GRID);
+  auto checkerboard = sim->addGround();
 
   for(int i = 0; i < benchmark::atlas::options.numRow; i++) {
     for(int j = 0; j < benchmark::atlas::options.numRow; j++) {
@@ -54,9 +51,6 @@ void resetWorld() {
   }
 
   sim->setGravity({0, 0, benchmark::atlas::params.g});
-
-  if(benchmark::atlas::options.gui)
-    sim->cameraFollowObject(checkerboard, {1.0, 1.0, 1.0});
 }
 
 double simulationLoop(bool timer = true, bool cntNumContact = true) {
@@ -64,9 +58,8 @@ double simulationLoop(bool timer = true, bool cntNumContact = true) {
   benchmark::atlas::data.setN(unsigned(benchmark::atlas::params.T / benchmark::atlas::params.dt));
 
   // timer start
-  StopWatch watch;
-  if(timer)
-    watch.start();
+  std::chrono::steady_clock::time_point begin, end;
+  begin = std::chrono::steady_clock::now();
 
   Eigen::VectorXd gc(robots[0]->getGeneralizedCoordinateDim());
   Eigen::VectorXd gv(robots[0]->getDOF());
@@ -76,12 +69,10 @@ double simulationLoop(bool timer = true, bool cntNumContact = true) {
 
   // no gui
   for(int t = 0; t < (int) (benchmark::atlas::params.T / benchmark::atlas::params.dt); t++) {
-    if(benchmark::atlas::options.gui && !sim->visualizerLoop())
-      break;
     sim->integrate1();
     for(int i = 0; i < robots.size(); i++) {
-      gc = robots[i]->getGeneralizedCoordinate();
-      gv = robots[i]->getGeneralizedVelocity();
+      gc = robots[i]->getGeneralizedCoordinate().e();
+      gv = robots[i]->getGeneralizedVelocity().e();
       tau.setZero();
       tau.tail(29) =
           -benchmark::atlas::params.kp.tail(29).cwiseProduct(gc.tail(29))
@@ -89,13 +80,11 @@ double simulationLoop(bool timer = true, bool cntNumContact = true) {
       robots[i]->setGeneralizedForce(tau);
     }
     sim->integrate2();
-    if(cntNumContact) benchmark::atlas::data.numContactList.push_back(sim->getContactProblem().size());
+    if(cntNumContact) benchmark::atlas::data.numContactList.push_back(sim->getContactProblem()->size());
   }
 
-  double time = 0;
-  if(timer)
-    time = watch.measure();
-  return time;
+  end = std::chrono::steady_clock::now();
+  return double(std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count())/1.0e6;
 }
 
 int main(int argc, const char* argv[]) {
@@ -106,7 +95,7 @@ int main(int argc, const char* argv[]) {
   benchmark::atlas::getParamsFromYAML(benchmark::atlas::getYamlpath().c_str(),
                                       benchmark::RAI);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "=======================" << std::endl
                 << "Simulator: RAI" << std::endl
                 << "GUI      : " << benchmark::atlas::options.gui << std::endl

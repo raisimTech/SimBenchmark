@@ -130,11 +130,11 @@ void dart_sim::object::DartSingleBodyObject::setFrictionCoefficient(double frict
 }
 
 void DartSingleBodyObject::setOrientationRandom() {
-  RAIFATAL("not implemented yet")
+   RSFATAL("not implemented yet")
 }
 
 bool dart_sim::object::DartSingleBodyObject::isVisualizeFramesAndCom() const {
-  RAIFATAL("not implemented yet")
+   RSFATAL("not implemented yet")
   return false;
 }
 

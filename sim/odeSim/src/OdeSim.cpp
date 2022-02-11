@@ -20,7 +20,7 @@ OdeSim::~OdeSim() {
 }
 
 void OdeSim::updateFrame() {
-  RAIFATAL_IF(!gui_, "use different constructor for visualization")
+   RSFATAL_IF(!gui_, "use different constructor for visualization")
   const bool showAlternateGraphicsIfexists = gui_->getCustomToggleState(3);
 
   for (auto &as : asHandles_) {
@@ -118,7 +118,7 @@ void OdeSim::updateFrame() {
     }
   }
 
-//  rai_sim::Mat<3, 3> rot;
+//  raisim::Mat<3, 3> rot;
 //  for (auto sb : comHandles_) {
 //    sb->getPosition_W(bodyPosition);
 //    sb->getRotationMatrix(rot);
@@ -388,9 +388,9 @@ ArticulatedSystemHandle OdeSim::addArticulatedSystem(std::string nm,
                                                                             true));
         break;
       case benchmark::object::Shape::Mesh:
-      RAIFATAL("mesh collision body is not supported yet");
+       RSFATAL("mesh collision body is not supported yet");
         break;
-      default: RAIFATAL("unsupported type: ");
+      default:  RSFATAL("unsupported type: ");
         break;
     }
     processGraphicalObject(handle.alternateVisual().back(), std::get<2>(handle->visColObj[i]));
@@ -441,11 +441,11 @@ int OdeSim::getWorldNumContacts() {
 }
 
 void OdeSim::integrate1(double dt) {
-RAIFATAL("not supported for ode")
+ RSFATAL("not supported for ode")
 }
 
 void OdeSim::integrate2(double dt) {
-  RAIFATAL("not supported for ode")
+   RSFATAL("not supported for ode")
 }
 
 void OdeSim::setCFM(double cfm) {

@@ -6,7 +6,7 @@
 
 #include "AnymalPDBenchmark.hpp"
 #include "OdeBenchmark.hpp"
-#include "raiCommon/utils/StopWatch.hpp"
+
 
 ode_sim::OdeSim *sim;
 std::vector<ode_sim::ArticulatedSystemHandle> anymals;
@@ -59,8 +59,7 @@ void resetWorld() {
 
   sim->setGravity({0, 0, benchmark::anymal::params.g});
 
-  if(benchmark::anymal::options.gui)
-    sim->cameraFollowObject(checkerboard, {1.0, 1.0, 1.0});
+
 }
 
 void simulationLoop() {
@@ -156,7 +155,7 @@ int main(int argc, const char* argv[]) {
   benchmark::anymal::getParamsFromYAML(benchmark::anymal::getYamlpath().c_str(),
                                        benchmark::ODE);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "=======================" << std::endl
                 << "Simulator: ODE" << std::endl
                 << "GUI      : " << benchmark::anymal::options.gui << std::endl
@@ -171,7 +170,7 @@ int main(int argc, const char* argv[]) {
   simulationLoop();
 
 
-  RAIINFO(
+   RSINFO(
       std::endl << "-----------------------" << std::endl
                 << "Contacts : " << sim->getWorldNumContacts() << std::endl
                 << "======================="

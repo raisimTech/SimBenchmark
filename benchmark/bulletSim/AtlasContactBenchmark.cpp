@@ -6,7 +6,7 @@
 
 #include "AtlasContactBenchmark.hpp"
 #include "BtMbBenchmark.hpp"
-#include "raiCommon/utils/StopWatch.hpp"
+
 
 bullet_mb_sim::BtMbSim *sim;
 std::vector<bullet_mb_sim::ArticulatedSystemHandle> robots;
@@ -108,7 +108,7 @@ int main(int argc, const char* argv[]) {
   benchmark::atlas::getParamsFromYAML(benchmark::atlas::getYamlpath().c_str(),
                                       benchmark::BULLET);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "=======================" << std::endl
                 << "Simulator: " << benchmark::bulletmultibody::options.simName << std::endl
                 << "GUI      : " << benchmark::atlas::options.gui << std::endl

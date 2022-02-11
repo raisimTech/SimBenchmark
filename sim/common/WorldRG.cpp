@@ -67,13 +67,13 @@ void WorldRG::loop(double dt, double realTimeFactor) {
 }
 
 void WorldRG::visStart() {
-  RAIFATAL_IF(!gui_, "use different constructor for visualization");
-  RAIFATAL_IF(gui_->isReady(), "call vis start only once. It is automatically called in loop");
+   RSFATAL_IF(!gui_, "use different constructor for visualization");
+   RSFATAL_IF(gui_->isReady(), "call vis start only once. It is automatically called in loop");
   gui_->start();
-  RAIINFO("Waiting for visualizer");
+   RSINFO("Waiting for visualizer");
   while (!gui_->isReady())
     usleep(5000);
-  RAIINFO("Simulation starting");
+   RSINFO("Simulation starting");
   isReady_ = true;
 }
 
@@ -113,13 +113,13 @@ bool WorldRG::visualizerLoop(double dt, double realTimeFactor) {
 //    objToInteract_->setExternalForce(interactionForce_, objToInteractLocalIdx_);
 
   //// toggle (0) is for pausing simulation
-  RAIINFO_IF(gui_->getCustomToggleState(10), "Simulation Paused")
+   RSINFO_IF(gui_->getCustomToggleState(10), "Simulation Paused")
   bool paused = false;
   while (gui_->getCustomToggleState(10)) {
     usleep(10000);
     paused = true;
   }
-  RAIINFO_IF(paused, "Simulation Resumed")
+   RSINFO_IF(paused, "Simulation Resumed")
 
   if (gui_->isQuitting()) {
     visEnd();
@@ -130,8 +130,8 @@ bool WorldRG::visualizerLoop(double dt, double realTimeFactor) {
 
 void WorldRG::cameraFollowObject(rai_graphics::object::SingleBodyObject *followingObject,
                                   Eigen::Vector3d relativePosition) {
-  RAIFATAL_IF(!gui_, "visualizer is not running")
-  RAIFATAL_IF(!followingObject, "cameraFollowObject error: no graphical object")
+   RSFATAL_IF(!gui_, "visualizer is not running")
+   RSFATAL_IF(!followingObject, "cameraFollowObject error: no graphical object")
   cameraProperty_.toFollow = followingObject;
   cameraProperty_.relativeDist = relativePosition;
   gui_->setCameraProp(cameraProperty_);
@@ -139,19 +139,19 @@ void WorldRG::cameraFollowObject(rai_graphics::object::SingleBodyObject *followi
 
 void WorldRG::cameraFollowObject(SingleBodyHandle followingObject,
                                   Eigen::Vector3d relativePosition) {
-  RAIFATAL_IF(!gui_, "visualizer is not running")
+   RSFATAL_IF(!gui_, "visualizer is not running")
   cameraFollowObject(followingObject.visual()[0], relativePosition);
 }
 
 void WorldRG::setLightPosition(float x, float y, float z) {
-  RAIFATAL_IF(!gui_, "RaiSim is running without visualization")
+   RSFATAL_IF(!gui_, "RaiSim is running without visualization")
   lightProperty_.pos_light = {x, y, z};
   gui_->setLightProp(lightProperty_);
 }
 
 void WorldRG::checkFileExistance(std::string nm) {
   std::ifstream model_file(nm);
-  RAIFATAL_IF(!model_file, "Error opening file: " << nm);
+   RSFATAL_IF(!model_file, "Error opening file: " << nm);
 }
 void WorldRG::processSingleBody(SingleBodyHandle handle) {
   sbHandles_.push_back(handle);

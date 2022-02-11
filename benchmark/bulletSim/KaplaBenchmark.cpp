@@ -179,7 +179,7 @@ benchmark::building::Data simulationLoop() {
     if(benchmark::building::options.collapse && objList.back()->getGeneralizedCoordinate()[2] <
         benchmark::building::params.heightLen * (benchmark::building::params.numFloor - 1) * 2) {
       // break if the building collapses
-      RAIINFO("building collapsed after " << i << " steps = " << i * benchmark::building::params.dt << " sec!")
+       RSINFO("building collapsed after " << i << " steps = " << i * benchmark::building::params.dt << " sec!")
       break;
     }
 
@@ -208,7 +208,7 @@ int main(int argc, const char* argv[]) {
   setupSimulation();
   setupWorld();
 
-  RAIINFO(
+   RSINFO(
       std::endl << "=======================" << std::endl
                 << "Simulator : " << benchmark::bulletmultibody::options.simName << std::endl
                 << "GUI       : " << benchmark::building::options.gui << std::endl
@@ -232,7 +232,7 @@ int main(int argc, const char* argv[]) {
                                   data.step,
                                   data.computeMeanContacts());
 
-  RAIINFO(
+   RSINFO(
       std::endl << "Avg. Num Contacts : " << data.computeMeanContacts() << std::endl
                 << "CPU time          : " << data.time << std::endl
                 << "num steps         : " << data.step << std::endl

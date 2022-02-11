@@ -6,7 +6,7 @@
 
 #include "AnymalPDBenchmark.hpp"
 #include "DartBenchmark.hpp"
-#include "raiCommon/utils/StopWatch.hpp"
+
 
 dart_sim::DartSim *sim;
 std::vector<dart_sim::ArticulatedSystemHandle> anymals;
@@ -65,8 +65,7 @@ void resetWorld() {
 
   sim->setGravity({0, 0, benchmark::anymal::params.g});
 
-  if(benchmark::anymal::options.gui)
-    sim->cameraFollowObject(checkerboard, {1.0, 1.0, 1.0});
+
 }
 
 void simulationLoop() {
@@ -157,7 +156,7 @@ int main(int argc, const char* argv[]) {
   benchmark::anymal::getParamsFromYAML(benchmark::anymal::getYamlpath().c_str(),
                                        benchmark::DART);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "=======================" << std::endl
                 << "Simulator: DART" << std::endl
                 << "GUI      : " << benchmark::anymal::options.gui << std::endl
@@ -171,7 +170,7 @@ int main(int argc, const char* argv[]) {
   resetWorld();
   simulationLoop();
 
-  RAIINFO(
+   RSINFO(
       std::endl << "-----------------------" << std::endl
                 << "Contacts : " << sim->getWorldNumContacts() << std::endl
                 << "======================="

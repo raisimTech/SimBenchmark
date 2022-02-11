@@ -2,19 +2,19 @@
 // Created by kangd on 15.02.18.
 //
 
-#include <raiSim/World_RG.hpp>
-
+#include "raisim/World.hpp"
 #include "666Benchmark.hpp"
+#include "raisim/RaisimServer.hpp"
 
-rai_sim::World_RG *sim;
-std::vector<rai_sim::SingleBodyHandle> objList;
+raisim::World *sim;
+std::vector<raisim::SingleBodyObject*> objList;
 po::options_description desc;
 
 void setupSimulation() {
   if (benchmark::sixsixsix::options.gui)
-    sim = new rai_sim::World_RG(800, 600, 1, rai_sim::NO_BACKGROUND);
+    sim = new raisim::World;
   else
-    sim = new rai_sim::World_RG();
+    sim = new raisim::World;
 
   // erp
   if(benchmark::sixsixsix::options.erpYN)
@@ -62,9 +62,7 @@ void setupWorld() {
   sim->setGravity({0, 0, benchmark::sixsixsix::params.g});
 
   // materials
-  rai_sim::MaterialManager materials;
-  materials.setMaterialNames({"ground", "ball"});
-
+  raisim::MaterialManager materials;
   materials.setMaterialPairProp("ground", "ball",
                                 0, 0, 0.01);
   materials.setMaterialPairProp("ball", "ball",
@@ -72,12 +70,12 @@ void setupWorld() {
   sim->updateMaterialProp(materials);
 
   // random number generator
-  rai::RandomNumberGenerator<double> rand;
-  rand.seed(benchmark::sixsixsix::params.randomSeed);
+  std::mt19937 gen_;
+  std::uniform_real_distribution<double> uniDist_(0., 1.);
+  gen_.seed(benchmark::sixsixsix::params.randomSeed);
 
-  auto checkerboard = sim->addCheckerboard(5.0, 500.0, 500.0, 0.1, -1, rai_sim::GRID);
-  checkerboard->setMaterial(sim->getMaterialKey("ground"));
 
+  auto ground = sim->addGround(0, "ground");
   for(int i = 0; i < benchmark::sixsixsix::params.n; i++) {
     for(int j = 0; j < benchmark::sixsixsix::params.n; j++) {
       for(int k = 0; k < benchmark::sixsixsix::params.n; k++) {
@@ -89,66 +87,33 @@ void setupWorld() {
         // set position
         double x =
             double(i) * benchmark::sixsixsix::params.gap
-                + rand.sampleUniform01() * benchmark::sixsixsix::params.perturbation;
+                + uniDist_(gen_) * benchmark::sixsixsix::params.perturbation;
         double y =
             double(j) * benchmark::sixsixsix::params.gap
-                + rand.sampleUniform01() * benchmark::sixsixsix::params.perturbation;
+                + uniDist_(gen_) * benchmark::sixsixsix::params.perturbation;
         double z =
             double(k) * benchmark::sixsixsix::params.gap
-                + rand.sampleUniform01() * benchmark::sixsixsix::params.perturbation
+                + uniDist_(gen_) * benchmark::sixsixsix::params.perturbation
                 + benchmark::sixsixsix::params.H;
 
         obj->setPosition(x, y, z);
-        obj->setMaterial(sim->getMaterialKey("ball"));
+        obj->getCollisionObject()->material = "ball";
 //        obj->setOrientationRandom();
-
-        if(benchmark::sixsixsix::options.gui) {
-          if((i + j + k) % 3 == 0) {
-            obj.visual()[0]->setColor({0.5373,
-                                       0.6471,
-                                       0.3059});
-          }
-          else if((i + j + k) % 3 == 1) {
-            obj.visual()[0]->setColor({0.5373,
-                                       0.6471,
-                                       0.3059});
-          }
-          else if((i + j + k) % 3 == 2) {
-            obj.visual()[0]->setColor({0.5373,
-                                       0.6471,
-                                       0.3059});
-          }
-        }
 
         objList.push_back(obj);
       }
     }
   }
-
-  if(benchmark::sixsixsix::options.gui) {
-    sim->setLightPosition((float)benchmark::sixsixsix::params.lightPosition[0],
-                          (float)benchmark::sixsixsix::params.lightPosition[1],
-                          (float)benchmark::sixsixsix::params.lightPosition[2]);
-    sim->cameraFollowObject(objList[objList.size() / 2], {0, 5, 2});
-  }
 }
 
 double simulationLoop(bool timer = true, bool error = true) {
-  // gui
-  if(benchmark::sixsixsix::options.gui && benchmark::sixsixsix::options.saveVideo)
-    sim->startRecordingVideo("/tmp", "rai-666");
-
   // resever error vector
   benchmark::sixsixsix::data.setN(unsigned(benchmark::sixsixsix::options.T / benchmark::sixsixsix::options.dt));
 
-  // timer start
-  StopWatch watch;
-  if(timer)
-    watch.start();
+  std::chrono::steady_clock::time_point begin, end;
+  begin = std::chrono::steady_clock::now();
 
   for(int i = 0; i < (int) (benchmark::sixsixsix::options.T / benchmark::sixsixsix::options.dt); i++) {
-    if (benchmark::sixsixsix::options.gui && !sim->visualizerLoop())
-      break;
 
     // data save
     if (error) {
@@ -159,17 +124,12 @@ double simulationLoop(bool timer = true, bool error = true) {
       double error = penetrationCheck();
       benchmark::sixsixsix::data.error.push_back(error);
     }
-
+//    raisim::MSLEEP(100);
     sim->integrate();
   }
 
-  if(benchmark::sixsixsix::options.saveVideo)
-    sim->stopRecordingVideo();
-
-  double time = 0;
-  if(timer)
-    time = watch.measure();
-  return time;
+  end = std::chrono::steady_clock::now();
+  return double(std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count())/1.0e6;
 }
 
 int main(int argc, const char* argv[]) {
@@ -179,8 +139,7 @@ int main(int argc, const char* argv[]) {
   benchmark::sixsixsix::getParamsFromYAML(benchmark::sixsixsix::getYamlpath().c_str(),
                                           benchmark::RAI);
 
-  RAIINFO(
-      std::endl << "=======================" << std::endl
+  RSINFO(          "\n=======================" << std::endl
                 << "Simulator: " << "RAI" << std::endl
                 << "GUI      : " << benchmark::sixsixsix::options.gui << std::endl
                 << "ERP      : " << benchmark::sixsixsix::options.erpYN << std::endl
@@ -192,7 +151,13 @@ int main(int argc, const char* argv[]) {
   // trial1: get Error
   setupSimulation();
   setupWorld();
+  raisim::RaisimServer server(sim);
+  if(benchmark::sixsixsix::options.gui)
+    server.launchServer();
   simulationLoop(false, true);
+  if(benchmark::sixsixsix::options.gui)
+    server.killServer();
+
   double error = benchmark::sixsixsix::data.computeError();
 
   // reset
@@ -204,7 +169,6 @@ int main(int argc, const char* argv[]) {
   setupWorld();
   double time = simulationLoop(true, false);
 
-
   if(benchmark::sixsixsix::options.csv)
     benchmark::sixsixsix::printCSV(benchmark::sixsixsix::getCSVpath(),
                                    "RAI",
@@ -214,7 +178,7 @@ int main(int argc, const char* argv[]) {
                                    time,
                                    error);
 
-  RAIINFO(
+  RSINFO(
       std::endl << "CPU time   : " << time << std::endl
                 << "mean error : " << error << std::endl
                 << "=======================" << std::endl

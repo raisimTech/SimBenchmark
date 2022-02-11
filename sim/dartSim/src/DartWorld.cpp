@@ -22,7 +22,7 @@ DartWorld::DartWorld(SolverOption solverOption, CollisionDetectorOption detector
         dart::common::make_unique<dart::constraint::PGSLCPSolver>(dynamicsWorld_->getTimeStep())
     );
   } else {
-    RAIFATAL("invalid solver type for dart")
+     RSFATAL("invalid solver type for dart")
   }
 
   /// collision detector
@@ -43,7 +43,7 @@ DartWorld::DartWorld(SolverOption solverOption, CollisionDetectorOption detector
         dart::collision::DARTCollisionDetector::create()
     );
   } else {
-    RAIFATAL("invalid collision detector type for dart")
+     RSFATAL("invalid collision detector type for dart")
   }
 }
 
@@ -161,13 +161,13 @@ const std::vector<Single3DContactProblem> &DartWorld::getCollisionProblem() {
 }
 
 void DartWorld::integrate(double dt) {
-  RAIFATAL("use setTimeStep(double dt) + integrate() instead")
+   RSFATAL("use setTimeStep(double dt) + integrate() instead")
 }
 void DartWorld::integrate1(double dt) {
-  RAIFATAL("not supported for dart")
+   RSFATAL("not supported for dart")
 }
 void DartWorld::integrate2(double dt) {
-  RAIFATAL("not supported for dart")
+   RSFATAL("not supported for dart")
 }
 
 } // dart_sim

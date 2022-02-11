@@ -52,8 +52,8 @@ int main(int argc, const char* argv[]) {
   }
 
   double time =  watch.measure();
-  RAIINFO("num contacts = " << double(numcontact/numiter));
-  RAIINFO("100k takes " << time <<" seconds = " << 100.0 / time << " kHz");
+   RSINFO("num contacts = " << double(numcontact/numiter));
+   RSINFO("100k takes " << time <<" seconds = " << 100.0 / time << " kHz");
 
   return 0;
 }

@@ -67,7 +67,7 @@ class ArticulatedSystemInterface {
   /// r, g, b, alpha
   virtual void setColor(Eigen::Vector4d color) = 0;
 
-  virtual const Eigen::Map<Eigen::Matrix<double, 3, 1>> getLinearMomentumInCartesianSpace() = 0;
+  virtual const Eigen::Map<Eigen::Matrix<double, 3, 1>> getLinearMomentum() = 0;
 
   virtual double getTotalMass() = 0;
 

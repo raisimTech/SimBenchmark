@@ -208,11 +208,11 @@ const std::vector<ode_sim::Single3DContactProblem> *ode_sim::OdeWorld::getCollis
 }
 
 void OdeWorld::integrate1(double dt) {
-  RAIFATAL("not supported for ode")
+   RSFATAL("not supported for ode")
 }
 
 void OdeWorld::integrate2(double dt) {
-  RAIFATAL("not supported for ode")
+   RSFATAL("not supported for ode")
 }
 
 

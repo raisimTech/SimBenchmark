@@ -2,34 +2,30 @@
 // Created by kangd on 26.04.18.
 //
 
-#include <raiSim/World_RG.hpp>
+#include "raisim/World.hpp"
 
 #include "AnymalPDBenchmark.hpp"
-#include "raiCommon/utils/StopWatch.hpp"
 
-rai_sim::World_RG *sim;
-std::vector<rai_sim::ArticulatedSystemHandle> anymals;
+
+raisim::World* sim;
+std::vector<raisim::ArticulatedSystem*> anymals;
 po::options_description desc;
 
 void setupSimulation() {
-  if(benchmark::anymal::options.gui)
-    sim = new rai_sim::World_RG(800, 600, 0.5, rai_sim::NO_BACKGROUND);
-  else
-    sim = new rai_sim::World_RG();
+  sim = new raisim::World();
 
   // time step
   sim->setTimeStep(benchmark::anymal::params.dt);
 }
 
 void resetWorld() {
-  auto checkerboard = sim->addCheckerboard(2, 100, 100, 0.1, -1, rai_sim::GRID);
+  auto checkerboard = sim->addGround();
 
   for(int i = 0; i < benchmark::anymal::options.numRow; i++) {
     for(int j = 0; j < benchmark::anymal::options.numRow; j++) {
       auto anymal = sim->addArticulatedSystem(
           benchmark::anymal::getURDFpath()
       );
-//      anymal->setColor({1, 0, 0, 1});
       anymal->setGeneralizedCoordinate(
           {i * 2.0,
            j * 2.0,
@@ -58,9 +54,6 @@ void resetWorld() {
   }
 
   sim->setGravity({0, 0, benchmark::anymal::params.g});
-
-  if(benchmark::anymal::options.gui)
-    sim->cameraFollowObject(checkerboard, {1.0, 1.0, 1.0});
 }
 
 void simulationLoop() {
@@ -91,53 +84,37 @@ void simulationLoop() {
       benchmark::anymal::params.jointPos[10],
       benchmark::anymal::params.jointPos[11];
 
-  if(benchmark::anymal::options.gui) {
-    // gui
-    while(sim->visualizerLoop()) {
-      for(int i = 0; i < anymals.size(); i++) {
-        jointState = anymals[i]->getGeneralizedCoordinate();
-        jointVel = anymals[i]->getGeneralizedVelocity();
-        jointForce = anymals[i]->getGeneralizedForce();
+  std::chrono::steady_clock::time_point begin, end;
+  begin = std::chrono::steady_clock::now();
 
-        jointForce = kp * (jointNominalConfig - jointState).tail(18) - kd * jointVel;
-        jointForce.head(6).setZero();
-        anymals[i]->setGeneralizedForce(jointForce);
-      }
-      sim->integrate();
+  for(int t = 0; t < (int) (benchmark::anymal::params.T / benchmark::anymal::params.dt); t++) {
+    for(int i = 0; i < anymals.size(); i++) {
+      jointState = anymals[i]->getGeneralizedCoordinate().e();
+      jointVel = anymals[i]->getGeneralizedVelocity().e();
+      jointForce = anymals[i]->getGeneralizedForce().e();
+
+      jointForce = kp * (jointNominalConfig - jointState).tail(18) - kd * jointVel;
+      jointForce.head(6).setZero();
+      anymals[i]->setGeneralizedForce(jointForce);
     }
-  } else {
-    // no gui
-    StopWatch watch;
-    watch.start();
-    for(int t = 0; t < (int) (benchmark::anymal::params.T / benchmark::anymal::params.dt); t++) {
-      for(int i = 0; i < anymals.size(); i++) {
-        jointState = anymals[i]->getGeneralizedCoordinate();
-        jointVel = anymals[i]->getGeneralizedVelocity();
-        jointForce = anymals[i]->getGeneralizedForce();
-
-        jointForce = kp * (jointNominalConfig - jointState).tail(18) - kd * jointVel;
-        jointForce.head(6).setZero();
-        anymals[i]->setGeneralizedForce(jointForce);
-      }
-      sim->integrate();
-    }
-
-    double time = watch.measure();
-
-    // print to screen
-    std::cout<<"time taken for "
-             << (int) (benchmark::anymal::params.T / benchmark::anymal::params.dt)
-             << " steps "<< time <<"s \n";
-
-    if(benchmark::anymal::options.csv)
-      benchmark::anymal::printCSV(benchmark::anymal::getCSVpath(benchmark::anymal::options.feedback),
-                                  "RAI",
-                                  "RAI",
-                                  "RAI",
-                                  "RAI",
-                                  benchmark::anymal::options.numRow,
-                                  time);
+    sim->integrate();
   }
+
+  end = std::chrono::steady_clock::now();
+
+  // print to screen
+  std::cout<<"time taken for "
+           << (int) (benchmark::anymal::params.T / benchmark::anymal::params.dt)
+           << " steps "<< double(std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count())/1.0e6 <<"s \n";
+
+  if(benchmark::anymal::options.csv)
+    benchmark::anymal::printCSV(benchmark::anymal::getCSVpath(benchmark::anymal::options.feedback),
+                                "RAI",
+                                "RAI",
+                                "RAI",
+                                "RAI",
+                                benchmark::anymal::options.numRow,
+                                double(std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count())/1.0e6);
 }
 
 int main(int argc, const char* argv[]) {
@@ -148,7 +125,7 @@ int main(int argc, const char* argv[]) {
   benchmark::anymal::getParamsFromYAML(benchmark::anymal::getYamlpath().c_str(),
                                        benchmark::RAI);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "=======================" << std::endl
                 << "Simulator: RAI" << std::endl
                 << "GUI      : " << benchmark::anymal::options.gui << std::endl
@@ -161,7 +138,7 @@ int main(int argc, const char* argv[]) {
   resetWorld();
   simulationLoop();
 
-  RAIINFO(
+   RSINFO(
       std::endl << "=======================" 
   )
 

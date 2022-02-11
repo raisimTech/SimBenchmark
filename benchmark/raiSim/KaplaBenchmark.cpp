@@ -2,19 +2,16 @@
 // Created by kangd on 09.05.18.
 //
 
-#include <raiSim/World_RG.hpp>
-
+#include "raisim/World.hpp"
 #include "KaplaBenchmark.hpp"
+#include "raisim/RaisimServer.hpp"
 
-rai_sim::World_RG *sim;
-std::vector<rai_sim::SingleBodyHandle> objList;
+raisim::World* sim;
+std::vector<raisim::SingleBodyObject*> objList;
 po::options_description desc;
 
 void setupSimulation() {
-  if (benchmark::building::options.gui)
-    sim = new rai_sim::World_RG(800, 600, 0.015, rai_sim::NO_BACKGROUND);
-  else
-    sim = new rai_sim::World_RG();
+  sim = new raisim::World();
 
   // erp
   if(benchmark::building::options.erpYN)
@@ -32,7 +29,7 @@ void setupSimulation() {
 
 void setupWorld() {
   // add objects
-  auto checkerboard = sim->addCheckerboard(10.0, 400.0, 400.0, 0.1, -1, rai_sim::GRID);
+  auto checkerboard = sim->addGround();
 
   // block size
   const float shortLen = benchmark::building::params.shortLen;
@@ -52,9 +49,6 @@ void setupWorld() {
       auto base = sim->addBox(shortLen, longLen + 0.05, heightLen, 10.0);
       base->setPosition(j * longLen, 0, i * heightLen * 2 + 0.05);
       objList.push_back(base);
-
-      if(benchmark::building::options.gui)
-        base.visual()[0]->setColor({0.0, 0.0, 1.0});
     }
 
     for(int j = 0; j < numWall; j++) {
@@ -62,9 +56,6 @@ void setupWorld() {
       auto wall = sim->addBox(longLen, shortLen, heightLen, 10.0);
       wall->setPosition(j * longLen * 2 + 0.1, -0.5 * longLen, i * heightLen * 2 + 0.15);
       objList.push_back(wall);
-
-      if(benchmark::building::options.gui)
-        wall.visual()[0]->setColor({0.0, 1.0, 0.0});
     }
 
     for(int j = 0; j < numWall - 1; j++) {
@@ -72,9 +63,6 @@ void setupWorld() {
       auto wall = sim->addBox(longLen, shortLen, heightLen, 10.0);
       wall->setPosition(j * longLen * 2 + 0.3, 0.5 * longLen, i * heightLen * 2 + 0.15);
       objList.push_back(wall);
-
-      if(benchmark::building::options.gui)
-        wall.visual()[0]->setColor({1.0, 0.0, 0.0});
     }
 
     // first wall on left
@@ -86,59 +74,38 @@ void setupWorld() {
     auto wall2 = sim->addBox(longLen, shortLen, heightLen, 10.0);
     wall2->setPosition((numWall - 1) * longLen * 2 + 0.1, 0.5 * longLen, i * heightLen * 2 + 0.15);
     objList.push_back(wall2);
-
-    if(benchmark::building::options.gui) {
-      wall1.visual()[0]->setColor({1.0, 0.0, 0.0});
-      wall2.visual()[0]->setColor({1.0, 0.0, 0.0});
-    }
   }
 
   // gravity
   sim->setGravity({0, 0, benchmark::building::params.g});
-
-  if(benchmark::building::options.gui) {
-    sim->setLightPosition((float)benchmark::building::params.lightPosition[0],
-                          (float)benchmark::building::params.lightPosition[1],
-                          (float)benchmark::building::params.lightPosition[2]);
-    sim->cameraFollowObject(checkerboard, {0, 5, 2});
-  }
 }
 
 benchmark::building::Data simulationLoop() {
-  if(benchmark::building::options.saveVideo)
-    sim->startRecordingVideo("/tmp", "rai-building");
-
   // data
   benchmark::building::Data data;
   data.setN(unsigned(benchmark::building::params.T / benchmark::building::params.dt));
 
   // timer start
-  StopWatch watch;
-  watch.start();
+  std::chrono::steady_clock::time_point begin, end;
+  begin = std::chrono::steady_clock::now();
 
   int i;
   for(i = 0; i < (int) (benchmark::building::params.T / benchmark::building::params.dt); i++) {
-    // gui
-    if (benchmark::building::options.gui && !sim->visualizerLoop())
-      break;
-
     // num contacts
-    data.numContacts.push_back(sim->getContactProblem().size());
+    data.numContacts.push_back(sim->getContactProblem()->size());
 
     if(benchmark::building::options.collapse && objList.back()->getPosition()[2] <
         benchmark::building::params.heightLen * (benchmark::building::params.numFloor - 1) * 2) {
       // break if the building collapses
-      RAIINFO("building collapsed after " << i << " steps = " << i * benchmark::building::params.dt << " sec!")
+       RSINFO("building collapsed after " << i << " steps = " << i * benchmark::building::params.dt << " sec!")
       break;
     }
 
     sim->integrate();
   }
 
-  if(benchmark::building::options.saveVideo)
-    sim->stopRecordingVideo();
-
-  data.time = watch.measure();
+  end = std::chrono::steady_clock::now();
+  data.time = double(std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count())/1.0e6;
   data.step = i;
   return data;
 }
@@ -153,9 +120,9 @@ int main(int argc, const char* argv[]) {
   setupSimulation();
   setupWorld();
 
-  RAIINFO(
+   RSINFO(
       std::endl << "=======================" << std::endl
-                << "Simulator : DART" << std::endl
+                << "Simulator : Raisim" << std::endl
                 << "GUI       : " << benchmark::building::options.gui << std::endl
                 << "ERP       : " << benchmark::building::options.erpYN << std::endl
                 << "Num iter  : " << benchmark::building::options.numSolverIter << std::endl
@@ -165,7 +132,14 @@ int main(int argc, const char* argv[]) {
                 << "-----------------------"
   )
 
+  raisim::RaisimServer server(sim);
+
+  if(benchmark::building::options.gui)
+    server.launchServer();
   benchmark::building::Data data = simulationLoop();
+
+  if(benchmark::building::options.gui)
+    server.killServer();
 
   if(benchmark::building::options.csv)
     benchmark::building::printCSV(benchmark::building::getCSVpath(),
@@ -177,7 +151,7 @@ int main(int argc, const char* argv[]) {
                                   data.step,
                                   data.computeMeanContacts());
 
-  RAIINFO(
+   RSINFO(
       std::endl << "Avg. Num Contacts : " << data.computeMeanContacts() << std::endl
                 << "CPU time          : " << data.time << std::endl
                 << "num steps         : " << data.step << std::endl

@@ -109,7 +109,7 @@ int main(int argc, const char* argv[]) {
   benchmark::bouncing::getParamsFromYAML(benchmark::bouncing::getYamlPath().c_str(),
                                          benchmark::ODE);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "=======================" << std::endl
                 << "Simulator: ODE" << std::endl
                 << "GUI      : " << benchmark::bouncing::options.gui << std::endl
@@ -144,7 +144,7 @@ int main(int argc, const char* argv[]) {
                                   time,
                                   error);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "CPU time   : " << time << std::endl
                 << "mean error : " << error << std::endl
                 << "=======================" << std::endl

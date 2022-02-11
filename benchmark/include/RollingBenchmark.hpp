@@ -22,7 +22,6 @@
  */
 
 namespace po = boost::program_options;
-namespace ru = rai::Utils;
 
 namespace benchmark::rolling {
 
@@ -158,31 +157,6 @@ struct Data {
       velErrorSq.row(i).x() = pow((ballVel[i].x() - ballVec.x()), 2) + pow((boxVel[i].x() - boxVec.x()), 2);
       velErrorSq.row(i).y() = pow((ballVel[i].y() - ballVec.y()), 2) + pow((boxVel[i].y() - boxVec.y()), 2);
       velErrorSq.row(i).z() = pow((ballVel[i].z() - ballVec.z()), 2) + pow((boxVel[i].z() - boxVec.z()), 2);
-    }
-
-    if(options.plot) {
-      Eigen::MatrixXd tdata(n, 1);        // time
-      Eigen::MatrixXd xdata(n, 1);        // x elements
-      Eigen::MatrixXd ydata(n, 1);        // y elements
-      Eigen::MatrixXd zdata(n, 1);        // z elements
-      Eigen::MatrixXd sumdata(n, 1);      // sum elements
-
-      for(int i = 0; i < n; i++) {
-        tdata(i, 0) = i * benchmark::rolling::options.dt;
-        xdata(i, 0) = velErrorSq(i, 0);
-        ydata(i, 0) = velErrorSq(i, 1);
-        zdata(i, 0) = velErrorSq(i, 2);
-        sumdata(i, 0) = velErrorSq.row(i).sum();
-      }
-
-      rai::Utils::Graph::FigProp2D figure1properties("time", "squared velocity error", "squared velocity error");
-      rai::Utils::graph->figure(1, figure1properties);
-      rai::Utils::graph->appendData(1, tdata.data(), xdata.data(), n, "x error sq");
-      rai::Utils::graph->appendData(1, tdata.data(), ydata.data(), n, "y error sq");
-      rai::Utils::graph->appendData(1, tdata.data(), zdata.data(), n, "z error sq");
-      rai::Utils::graph->appendData(1, tdata.data(), sumdata.data(), n, "sum");
-      rai::Utils::graph->drawFigure(1);
-      rai::Utils::graph->waitForEnter();
     }
 
     return velErrorSq.rowwise().sum().mean();
@@ -353,7 +327,7 @@ void getOptionsFromArg(int argc, const char *argv[], po::options_description &de
 
   // save video
   if(vm.count("video")) {
-    RAIFATAL_IF(!options.gui, "GUI should be on to save a video")
+     RSFATAL_IF(!options.gui, "GUI should be on to save a video")
     options.saveVideo = true;
   }
 
@@ -369,7 +343,7 @@ void getOptionsFromArg(int argc, const char *argv[], po::options_description &de
     } else if(vm["force"].as<std::string>().compare("y") == 0) {
       options.forceDirection = FORCE_Y;
     } else {
-      RAIFATAL("invalid force input (should be xy or y)")
+       RSFATAL("invalid force input (should be xy or y)")
     }
   }
 
@@ -464,30 +438,8 @@ void getParamsFromYAML(const char *yamlfile, benchmark::Simulator simulator) {
       params.dartBoxMu = constant["dart"]["mu_box"].as<double>();
       break;
     default:
-    RAIFATAL("invalid simulator value")
+     RSFATAL("invalid simulator value")
   }
-}
-
-/**
- * set up logger and timer log
- *
- * @param path directory path of log files
- * @param name name of log file
- */
-void loggerSetup(std::string path, std::string name) {
-  // logger
-  ru::logger->setLogPath(path);
-  ru::logger->setLogFileName(name);
-  ru::logger->setOptions(ru::ONEFILE_FOR_ONEDATA);
-  ru::logger->addVariableToLog(3, "velbox", "linear velocity of box");
-  ru::logger->addVariableToLog(3, "velball", "linear velocity of ball");
-  ru::logger->addVariableToLog(3, "posbox", "position of box");
-  ru::logger->addVariableToLog(3, "posball", "position of ball");
-
-  // timer
-  std::string timer = name + "timer";
-  ru::timer->setLogPath(path);
-  ru::timer->setLogFileName(timer);
 }
 
 Eigen::Vector3d computeAnalyticalSol(double t, bool isBall) {

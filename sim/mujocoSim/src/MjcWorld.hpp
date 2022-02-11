@@ -101,7 +101,7 @@ class MjcWorld: public benchmark::WorldInterface {
   int getWorldNumContacts();
   int getNumObject() override ;
 
-  const Eigen::Map<Eigen::Matrix<double, 3, 1>> getLinearMomentumInCartesianSpace();
+  const Eigen::Map<Eigen::Matrix<double, 3, 1>> getLinearMomentum();
   double getTotalMass();
 
   void forwardKinematics();

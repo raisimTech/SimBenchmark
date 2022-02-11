@@ -2,7 +2,7 @@
 // Created by kangd on 24.04.18.
 //
 
-#include <raiSim/World_RG.hpp>
+#include "raisim/World.hpp"
 
 int main() {
 
@@ -16,12 +16,12 @@ int main() {
     urdfPath.erase(urdfPath.size() - 1, 1);
   urdfPath += "../../../res/2DRobotArm/robot.urdf";
 
-  rai_sim::World_RG sim(800, 600, 0.5, rai_sim::NO_BACKGROUND);
+  raisim::World_RG sim(800, 600, 0.5, raisim::NO_BACKGROUND);
 
   auto arm = sim.addArticulatedSystem(urdfPath);
   auto checkerBoard = sim.addCheckerboard(1, 100, 100, 0.1,
                                           1, -1,
-                                          rai_sim::GRID);
+                                          raisim::GRID);
 
   Eigen::VectorXd gc(arm->getStateDim());
   Eigen::VectorXd gv(arm->getDOF()), tau(arm->getDOF());

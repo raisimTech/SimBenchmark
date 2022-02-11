@@ -2,19 +2,16 @@
 // Created by kangd on 15.02.18.
 //
 
-#include <raiSim/World_RG.hpp>
+#include "raisim/World.hpp"
 
 #include "BouncingBenchmark.hpp"
 
-rai_sim::World_RG *sim;
-std::vector<rai_sim::SingleBodyHandle> objList;
+raisim::World* sim;
+std::vector<raisim::SingleBodyObject*> objList;
 po::options_description desc;
 
 void setupSimulation() {
-  if (benchmark::bouncing::options.gui)
-    sim = new rai_sim::World_RG(800, 600, 0.5, rai_sim::NO_BACKGROUND);
-  else
-    sim = new rai_sim::World_RG();
+  sim = new raisim::World();
 
   // time step
   sim->setTimeStep(benchmark::bouncing::options.dt);
@@ -28,8 +25,7 @@ void setupSimulation() {
 
 void setupWorld() {
   // materials
-  rai_sim::MaterialManager materials;
-  materials.setMaterialNames({"ground", "ball"});
+  raisim::MaterialManager materials;
   materials.setMaterialPairProp("ground", "ball",
                                 benchmark::bouncing::params.mu_ground * benchmark::bouncing::params.mu_ball,
                                 benchmark::bouncing::options.e,
@@ -37,50 +33,29 @@ void setupWorld() {
   sim->updateMaterialProp(materials);
 
   // add objects
-  auto checkerboard = sim->addCheckerboard(5.0, 100.0, 100.0, 0.1, -1, rai_sim::GRID);
-  checkerboard->setMaterial(sim->getMaterialKey("ground"));
+  auto checkerboard = sim->addGround();
+  checkerboard->getCollisionObject()->material = "ground";
 
   for(int i = 0; i < benchmark::bouncing::params.n; i++) {
     for(int j = 0; j < benchmark::bouncing::params.n; j++) {
       auto ball = sim->addSphere(benchmark::bouncing::params.R, benchmark::bouncing::params.m);
       ball->setPosition(i * 2.0, j * 2.0, benchmark::bouncing::params.H);
-      ball->setMaterial(sim->getMaterialKey("ball"));
-
-      if(benchmark::bouncing::options.gui)
-        ball.visual()[0]->setColor({0.5373, 0.6471, 0.3059});
-
+      ball->getCollisionObject()->material = "ball";
       objList.push_back(ball);
     }
   }
 
   // gravity
   sim->setGravity({0, 0, benchmark::bouncing::params.g});
-
-  if(benchmark::bouncing::options.gui) {
-    sim->setLightPosition((float)benchmark::bouncing::params.lightPosition[0],
-                          (float)benchmark::bouncing::params.lightPosition[1],
-                          (float)benchmark::bouncing::params.lightPosition[2]);
-    sim->cameraFollowObject(checkerboard, {10, 0, 10});
-  }
 }
 
 double simulationLoop(bool timer = true, bool error = true) {
-  if(benchmark::bouncing::options.saveVideo)
-    sim->startRecordingVideo("/tmp", "ode-bouncing");
-
   // resever error vector
   benchmark::bouncing::data.setN(unsigned(benchmark::bouncing::params.T / benchmark::bouncing::options.dt));
-
-  // timer start
-  StopWatch watch;
-  if(timer)
-    watch.start();
+  std::chrono::steady_clock::time_point begin, end;
+  begin = std::chrono::steady_clock::now();
 
   for(int i = 0; i < (int) (benchmark::bouncing::params.T / benchmark::bouncing::options.dt); i++) {
-    // gui
-    if (benchmark::bouncing::options.gui && !sim->visualizerLoop())
-      break;
-
     // data save
     if (error) {
       double E = 0;
@@ -93,13 +68,8 @@ double simulationLoop(bool timer = true, bool error = true) {
     sim->integrate();
   }
 
-  if(benchmark::bouncing::options.saveVideo)
-    sim->stopRecordingVideo();
-
-  double time = 0;
-  if(timer)
-    time = watch.measure();
-  return time;
+  end = std::chrono::steady_clock::now();
+  return double(std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count())/1.0e6;
 }
 
 int main(int argc, const char* argv[]) {
@@ -109,7 +79,7 @@ int main(int argc, const char* argv[]) {
   benchmark::bouncing::getParamsFromYAML(benchmark::bouncing::getYamlPath().c_str(),
                                          benchmark::RAI);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "=======================" << std::endl
                 << "Simulator: RAI" << std::endl
                 << "GUI      : " << benchmark::bouncing::options.gui << std::endl
@@ -143,7 +113,7 @@ int main(int argc, const char* argv[]) {
                                   time,
                                   error);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "CPU time   : " << time << std::endl
                 << "mean error : " << error << std::endl
                 << "=======================" << std::endl

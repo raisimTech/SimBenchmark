@@ -5,7 +5,6 @@
 #ifndef BENCHMARK_ANYMALZEROGBENCHMARK_HPP
 #define BENCHMARK_ANYMALZEROGBENCHMARK_HPP
 
-#include <raiCommon/rai_utils.hpp>
 #include <boost/program_options.hpp>
 #include <yaml-cpp/yaml.h>
 
@@ -65,33 +64,6 @@ namespace benchmark::anymal::freedrop {
 
           for(int i = 0; i < n; i++) {
             energyErrorSq(i, 0) = pow(kineticE[i] + potentialE[i] - E0, 2);
-          }
-
-          if(options.plot) {
-            Eigen::MatrixXd tdata(n, 1);        // time
-            Eigen::MatrixXd kEdata(n, 1);       // kinetic E
-            Eigen::MatrixXd pEdata(n, 1);       // potential E
-            Eigen::MatrixXd tEdata(n, 1);       // total E
-
-            for(int i = 0; i < n; i++) {
-              tdata(i, 0) = i * options.dt;
-              kEdata(i, 0) = kineticE[i];
-              pEdata(i, 0) = potentialE[i];
-              tEdata(i, 0) = potentialE[i] + kineticE[i];
-            }
-
-            rai::Utils::Graph::FigProp2D figure1properties("time", "squared energy error", "squared energy error");
-            rai::Utils::graph->figure(1, figure1properties);
-            rai::Utils::graph->appendData(1, tdata.data(), energyErrorSq.data(), n, "error sq");
-            rai::Utils::graph->drawFigure(1);
-
-            rai::Utils::Graph::FigProp2D figure2properties("time", "momentum", "momentum");
-            rai::Utils::graph->figure(2, figure2properties);
-            rai::Utils::graph->appendData(2, tdata.data(), kEdata.data(), n, "kinetic E");
-            rai::Utils::graph->appendData(2, tdata.data(), pEdata.data(), n, "potential E");
-            rai::Utils::graph->appendData(2, tdata.data(), tEdata.data(), n, "total E");
-            rai::Utils::graph->drawFigure(2);
-            rai::Utils::graph->waitForEnter();
           }
 
           return energyErrorSq.mean();
@@ -239,7 +211,7 @@ namespace benchmark::anymal::freedrop {
 
       // save video
       if(vm.count("video")) {
-        RAIFATAL_IF(!options.gui, "GUI should be on to save a video")
+        RSFATAL_IF(!options.gui, "GUI should be on to save a video")
         options.saveVideo = true;
       }
 
@@ -297,7 +269,7 @@ namespace benchmark::anymal::freedrop {
         case benchmark::DART:
           break;
         default:
-        RAIFATAL("invalid simulator value")
+         RSFATAL("invalid simulator value")
       }
     }
 

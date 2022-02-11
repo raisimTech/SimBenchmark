@@ -1,18 +1,6 @@
 ########################################################################################################################
 # dependencies
 
-# yaml-cpp
-externalproject_get_property(ex_yamlcpp INSTALL_DIR)
-set(yamlcpp_include_dir "${INSTALL_DIR}/include")
-set(yamlcpp_lib_dir "${INSTALL_DIR}/lib")
-
-find_library(yaml-cpp
-        NO_DEFAULT_PATH
-        NAMES       yaml-cpp
-        PATHS       ${yamlcpp_lib_dir})
-
-#include_directories(${yamlcpp_include_dir})
-
 
 ########################################################################################################################
 # source
@@ -54,7 +42,7 @@ target_include_directories(benchmark
 
 target_link_libraries(benchmark
         INTERFACE
-        ${yaml-cpp}
+        yaml-cpp
         ${Boost_LIBRARIES}
         )
 
@@ -123,7 +111,7 @@ else()
     message(STATUS "  Cannot find dartSim. Stop build dartSim benchmark tests")
 endif()
 
-if(TARGET dartSim)
+if(RAISIM)
     add_subdirectory(raiSim)
 else()
     message(STATUS "  Cannot find raiSim. Stop build raiSim benchmark tests")

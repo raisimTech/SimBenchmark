@@ -5,7 +5,7 @@
 #include <boost/program_options.hpp>
 
 #include "BtMbSim.hpp"
-#include "raiCommon/utils/StopWatch.hpp"
+
 
 //#define VIDEO_SAVE_MODE
 #define URDFPATH ROOTPATH "/res/benchmark/ANYmal-energy-benchmark/bullet/robot.urdf"
@@ -46,7 +46,7 @@ int main(int argc, const char* argv[]) {
              0.0, 0.0, 0.0,
              0.0, 0.0, 0.0,
              0.0, 0.0, 0.0});
-    RAIINFO(anymal->getGeneralizedVelocity())
+     RSINFO(anymal->getGeneralizedVelocity())
 
     double g = 0;
     double dt = 0.005;
@@ -61,7 +61,7 @@ int main(int argc, const char* argv[]) {
         sim.integrate();
     }
 
-    RAIINFO("initial E = " << E0)
+     RSINFO("initial E = " << E0)
     showplot(E0);
     return 0;
 }

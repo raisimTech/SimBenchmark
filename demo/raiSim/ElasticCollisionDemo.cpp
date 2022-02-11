@@ -2,7 +2,7 @@
 // Created by kangd on 14.05.18.
 //
 
-#include <raiSim/World_RG.hpp>
+#include "raisim/World.hpp"
 
 enum Object {
   BOX,
@@ -12,11 +12,11 @@ enum Object {
 
 int main() {
 
-  rai_sim::World_RG sim(800, 600, 0.5, rai_sim::NO_BACKGROUND);
+  raisim::World_RG sim(800, 600, 0.5, raisim::NO_BACKGROUND);
   sim.setGravity({0, 0, 0});
   sim.setLightPosition(30, 0, 10);
 
-  rai_sim::MaterialManager materials;
+  raisim::MaterialManager materials;
   materials.setMaterialNames({"ground", "ball"});
   materials.setMaterialPairProp("ground", "ball",
                                 0, 1, 0);
@@ -47,8 +47,8 @@ int main() {
   // press 'q' key to quit
   sim.loop(dt, 1.0);
 
-  RAIINFO("ball1 vel = " << ball1->getLinearVelocity())
-  RAIINFO("ball2 vel = " << ball2->getLinearVelocity())
+   RSINFO("ball1 vel = " << ball1->getLinearVelocity())
+   RSINFO("ball2 vel = " << ball2->getLinearVelocity())
 
   return 0;
 }

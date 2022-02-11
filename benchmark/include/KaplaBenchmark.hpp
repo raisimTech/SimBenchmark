@@ -20,7 +20,6 @@
  */
 
 namespace po = boost::program_options;
-namespace ru = rai::Utils;
 
 namespace benchmark::building {
 
@@ -77,7 +76,7 @@ namespace benchmark::building {
         double g = -9.81;
 
         // simulation time
-        double T = 600.0;
+        double T = 10.0;
 
         // time step
         double dt = 0.01;
@@ -242,7 +241,7 @@ namespace benchmark::building {
 
       // save video
       if(vm.count("video")) {
-        RAIFATAL_IF(!options.gui, "GUI should be on to save a video")
+         RSFATAL_IF(!options.gui, "GUI should be on to save a video")
         options.saveVideo = true;
       }
 
@@ -319,21 +318,8 @@ namespace benchmark::building {
         case benchmark::DART:
           break;
         default:
-        RAIFATAL("invalid simulator value")
+         RSFATAL("invalid simulator value")
       }
-    }
-
-/**
- * set up logger and timer log
- *
- * @param path directory path of log files
- * @param name name of log file
- */
-    void loggerSetup(std::string path, std::string name) {
-      // timer
-      std::string timer = name + "timer";
-      ru::timer->setLogPath(path);
-      ru::timer->setLogFileName(timer);
     }
 
     void printCSV(std::string filePath,

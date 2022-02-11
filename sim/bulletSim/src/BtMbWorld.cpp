@@ -12,12 +12,12 @@ BtMbWorld::BtMbWorld() {
   bool isConnected = api_->connect(eCONNECT_SHARED_MEMORY);
 
   if (!isConnected) {
-    RAIINFO("BtMbSim initializing: Using Direct mode...");
+     RSINFO("BtMbSim initializing: Using Direct mode...");
     isConnected = api_->connect(eCONNECT_DIRECT);
   }
   else
   {
-    RAIINFO("BtMbSim initializing: Using shared memory...");
+     RSINFO("BtMbSim initializing: Using shared memory...");
   }
 
   //remove all existing objects (if any)

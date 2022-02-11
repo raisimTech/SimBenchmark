@@ -82,15 +82,15 @@ void mujoco_sim::MjcSim::initFromModel() {
           break;
         }
         case mjGEOM_ELLIPSOID: {
-          RAIFATAL("ellpisoid geometry is not supported.")
+           RSFATAL("ellpisoid geometry is not supported.")
           break;
         }
         case mjGEOM_NONE: {
-          RAIFATAL("invalid geometry type")
+           RSFATAL("invalid geometry type")
           break;
         }
         default: {
-          RAIFATAL("not supported geometry type");
+           RSFATAL("not supported geometry type");
         }
       }
 
@@ -173,12 +173,12 @@ void mujoco_sim::MjcSim::setGravity(Eigen::Vector3d gravity) {
 }
 
 void mujoco_sim::MjcSim::setERP(double erp, double erp2, double frictionErp) {
-  RAIFATAL("no erp for mujoco")
+   RSFATAL("no erp for mujoco")
 }
 
 benchmark::SingleBodyHandle mujoco_sim::MjcSim::getSingleBodyHandle(int index) {
   if(index > sbHandles_.size())
-  RAIFATAL("get singlebody handle failed. invalid index");
+   RSFATAL("get singlebody handle failed. invalid index");
   return sbHandles_[index];
 }
 const mujoco_sim::EigenVec mujoco_sim::MjcSim::getGeneralizedCoordinate() {
@@ -254,8 +254,8 @@ void mujoco_sim::MjcSim::integrate2() {
   world_.integrate2();
 }
 
-const Eigen::Map<Eigen::Matrix<double, 3, 1>> mujoco_sim::MjcSim::getLinearMomentumInCartesianSpace() {
-  return world_.getLinearMomentumInCartesianSpace();
+const Eigen::Map<Eigen::Matrix<double, 3, 1>> mujoco_sim::MjcSim::getLinearMomentum() {
+  return world_.getLinearMomentum();
 }
 
 double mujoco_sim::MjcSim::getTotalMass() {
@@ -279,22 +279,22 @@ void mujoco_sim::MjcSim::forwardKinematics() {
 }
 
 void mujoco_sim::MjcSim::loop(double dt, double realTimeFactor) {
-  RAIFATAL("use setTimeStep(double dt) + loop() instead")
+   RSFATAL("use setTimeStep(double dt) + loop() instead")
 }
 void mujoco_sim::MjcSim::integrate(double dt) {
-  RAIFATAL("use setTimeStep(double dt) + integrate() instead")
+   RSFATAL("use setTimeStep(double dt) + integrate() instead")
 }
 void mujoco_sim::MjcSim::integrate1(double dt) {
-  RAIFATAL("use setTimeStep(double dt) + integrate1() instead")
+   RSFATAL("use setTimeStep(double dt) + integrate1() instead")
 }
 
 
 void mujoco_sim::MjcSim::integrate2(double dt) {
-  RAIFATAL("use setTimeStep(double dt) + integrate2() instead")
+   RSFATAL("use setTimeStep(double dt) + integrate2() instead")
 }
 
 void mujoco_sim::MjcSim::updateFrame() {
-  RAIFATAL_IF(!gui_, "use different constructor for visualization")
+   RSFATAL_IF(!gui_, "use different constructor for visualization")
   const bool showAlternateGraphicsIfexists = gui_->getCustomToggleState(3);
 
   benchmark::Vec<3> bodyPosition;
@@ -323,7 +323,7 @@ void mujoco_sim::MjcSim::updateFrame() {
     }
   }
 
-//  rai_sim::Mat<3, 3> rot;
+//  raisim::Mat<3, 3> rot;
 //  for (auto sb : comHandles_) {
 //    sb->getPosition_W(bodyPosition);
 //    sb->getRotationMatrix(rot);

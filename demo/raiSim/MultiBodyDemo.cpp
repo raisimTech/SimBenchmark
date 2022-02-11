@@ -2,7 +2,7 @@
 // Created by kangd on 23.04.18.
 //
 
-#include <raiSim/World_RG.hpp>
+#include "raisim/World.hpp"
 
 int main() {
 
@@ -11,10 +11,10 @@ int main() {
     urdfPath.erase(urdfPath.size() - 1, 1);
   urdfPath += "../../../res/Multibody/robot.urdf";
 
-  rai_sim::World_RG sim(800, 600, 0.5, rai_sim::NO_BACKGROUND);
+  raisim::World_RG sim(800, 600, 0.5, raisim::NO_BACKGROUND);
   sim.setGravity({0, 0, 0});
 
-  auto checkerboard = sim.addCheckerboard(2, 100, 100, 0.1, 1, -1, rai_sim::GRID);
+  auto checkerboard = sim.addCheckerboard(2, 100, 100, 0.1, 1, -1, raisim::GRID);
   auto robot = sim.addArticulatedSystem(urdfPath);
   robot->setGeneralizedCoordinate(
       {0, 0, 1,
@@ -34,7 +34,7 @@ int main() {
     sim.integrate(0.005);
   }
 
-  RAIINFO("generalized coordinate = " << robot->getGeneralizedCoordinate());
+   RSINFO("generalized coordinate = " << robot->getGeneralizedCoordinate());
 
   return 0;
 }

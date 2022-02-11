@@ -15,7 +15,7 @@ OdeArticulatedSystem::OdeArticulatedSystem(std::string urdfFile,
     : worldID_(worldID), spaceID_(spaceID), collisionGroup_(collisionGroup), collisionMask_(collisionMask) {
 
   std::ifstream model_file(urdfFile);
-  RAIFATAL_IF(!model_file.good(), "Error opening file: " << urdfFile);
+   RSFATAL_IF(!model_file.good(), "Error opening file: " << urdfFile);
 
   // reserve memory for the contents of the file
   std::string model_xml_string;
@@ -131,7 +131,7 @@ void OdeArticulatedSystem::processLinkFromUrdf(boost::shared_ptr<const urdf::Lin
         raiLink.collision_.colShapeParam_.push_back({sph->radius, 0, 0, 0});
       }
       else {
-        RAIFATAL("mesh collision body is not supported yet");
+         RSFATAL("mesh collision body is not supported yet");
       }
 
       // relative position w.r.t. parent joint
@@ -232,7 +232,7 @@ void OdeArticulatedSystem::processLinkFromUrdf(boost::shared_ptr<const urdf::Lin
         break;
       }
       default:
-      RAIFATAL("currently only support revolute/prismatic/fixed joint");
+       RSFATAL("currently only support revolute/prismatic/fixed joint");
     }
 
     double r, p, y;
@@ -249,7 +249,7 @@ void OdeArticulatedSystem::processLinkFromUrdf(boost::shared_ptr<const urdf::Lin
     processLinkFromUrdf(ch, *childRef, jointsOrder);
   }
 
-  RAIFATAL_IF(jointsNumber != raiLink.childrenLinks_.size(),
+   RSFATAL_IF(jointsNumber != raiLink.childrenLinks_.size(),
               "URDF reader error. Please report to eastsky.kang@gmail.com")
 }
 
@@ -361,7 +361,7 @@ void OdeArticulatedSystem::initJoints(Link &link, benchmark::Mat<3, 3> &parentRo
         break;
       }
       default:
-      RAIFATAL("currently only support revolute/prismatic/fixed joint");
+       RSFATAL("currently only support revolute/prismatic/fixed joint");
 
     }
 
@@ -442,7 +442,7 @@ void OdeArticulatedSystem::initLink(Link &link,
       }
       else {
         // non-fixed-base link
-        RAIFATAL("zero inertial non-base link is not allowed in ODE")
+         RSFATAL("zero inertial non-base link is not allowed in ODE")
       }
     } // end of zero mass link
     else {
@@ -507,7 +507,7 @@ void OdeArticulatedSystem::initLink(Link &link,
           break;
         }
         default: {
-          RAIFATAL("this shape of collision is not supported yet")
+           RSFATAL("this shape of collision is not supported yet")
           break;
         }
       }
@@ -694,7 +694,7 @@ void OdeArticulatedSystem::updateBodyPos(Link &link,
         break;
       }
       default:
-      RAIFATAL("currently only support revolute/prismatic/fixed joint");
+       RSFATAL("currently only support revolute/prismatic/fixed joint");
     }
 
     updateBodyPos(childLink, rot_w, pos_w);
@@ -715,12 +715,12 @@ const benchmark::object::ArticulatedSystemInterface::EigenVec OdeArticulatedSyst
           break;
         }
         case Joint::PRISMATIC: {
-          RAIFATAL("prismatic joint is not tested yet")
+           RSFATAL("prismatic joint is not tested yet")
           genCoordinate_[i++] = dJointGetSliderPosition(joint->odeJoint_);
           break;
         }
         default:
-        RAIINFO("not supported joint type")
+         RSINFO("not supported joint type")
       }
     }
   }
@@ -748,12 +748,12 @@ const benchmark::object::ArticulatedSystemInterface::EigenVec OdeArticulatedSyst
           break;
         }
         case Joint::PRISMATIC: {
-          RAIFATAL("prismatic joint is not tested yet")
+           RSFATAL("prismatic joint is not tested yet")
           genCoordinate_[i++] = dJointGetSliderPosition(joint->odeJoint_);
           break;
         }
         default:
-        RAIINFO("not supported joint type")
+         RSINFO("not supported joint type")
       }
     }
   }
@@ -774,12 +774,12 @@ const benchmark::object::ArticulatedSystemInterface::EigenVec OdeArticulatedSyst
           break;
         }
         case Joint::PRISMATIC: {
-          RAIFATAL("prismatic joint is not tested yet")
+           RSFATAL("prismatic joint is not tested yet")
           genVelocity_[i++] = dJointGetSliderPositionRate(joint->odeJoint_);
           break;
         }
         default:
-        RAIINFO("not supported joint type")
+         RSINFO("not supported joint type")
       }
     }
   }
@@ -806,12 +806,12 @@ const benchmark::object::ArticulatedSystemInterface::EigenVec OdeArticulatedSyst
           break;
         }
         case Joint::PRISMATIC: {
-          RAIFATAL("prismatic joint is not tested yet")
+           RSFATAL("prismatic joint is not tested yet")
           genVelocity_[i++] = dJointGetSliderPositionRate(joint->odeJoint_);
           break;
         }
         default:
-        RAIINFO("not supported joint type")
+         RSINFO("not supported joint type")
       }
     }
   }
@@ -819,11 +819,11 @@ const benchmark::object::ArticulatedSystemInterface::EigenVec OdeArticulatedSyst
 }
 
 void OdeArticulatedSystem::getState(Eigen::VectorXd &genco, Eigen::VectorXd &genvel) {
-  RAIFATAL("not implemented yet")
+   RSFATAL("not implemented yet")
 }
 
 void OdeArticulatedSystem::setGeneralizedCoordinate(const Eigen::VectorXd &jointState) {
-  RAIFATAL_IF(jointState.size() != stateDimension_, "invalid generalized coordinate input")
+   RSFATAL_IF(jointState.size() != stateDimension_, "invalid generalized coordinate input")
 
   for(int i = 0; i < stateDimension_; i++) {
     genCoordinate_[i] = jointState[i];
@@ -862,7 +862,7 @@ void OdeArticulatedSystem::setGeneralizedCoordinate(const Eigen::VectorXd &joint
 }
 
 void OdeArticulatedSystem::setGeneralizedCoordinate(std::initializer_list<double> jointState) {
-  RAIFATAL_IF(jointState.size() != stateDimension_, "invalid generalized coordinate input")
+   RSFATAL_IF(jointState.size() != stateDimension_, "invalid generalized coordinate input")
 
   for(int i = 0; i < stateDimension_; i++) {
     genCoordinate_[i] = jointState.begin()[i];
@@ -901,7 +901,7 @@ void OdeArticulatedSystem::setGeneralizedCoordinate(std::initializer_list<double
 }
 
 void OdeArticulatedSystem::setGeneralizedForce(std::initializer_list<double> tau) {
-  RAIFATAL_IF(tau.size() != dof_, "invalid generalized force input")
+   RSFATAL_IF(tau.size() != dof_, "invalid generalized force input")
   if(isFixed_) {
     // fixed body
     int i = 0;
@@ -915,12 +915,12 @@ void OdeArticulatedSystem::setGeneralizedForce(std::initializer_list<double> tau
           break;
         }
         case Joint::PRISMATIC: {
-          RAIFATAL("prismatic joint is not tested yet")
+           RSFATAL("prismatic joint is not tested yet")
           dJointAddSliderForce(joint->odeJoint_, tau.begin()[i++]);
           break;
         }
         default:
-        RAIINFO("not supported joint type")
+         RSINFO("not supported joint type")
       }
     }
   }
@@ -940,19 +940,19 @@ void OdeArticulatedSystem::setGeneralizedForce(std::initializer_list<double> tau
           break;
         }
         case Joint::PRISMATIC: {
-          RAIFATAL("prismatic joint is not tested yet")
+           RSFATAL("prismatic joint is not tested yet")
           dJointAddSliderForce(joint->odeJoint_, tau.begin()[i++]);
           break;
         }
         default:
-        RAIINFO("not supported joint type")
+         RSINFO("not supported joint type")
       }
     }
   }
 }
 
 void OdeArticulatedSystem::setGeneralizedForce(const Eigen::VectorXd &tau) {
-  RAIFATAL_IF(tau.size() != dof_, "invalid generalized force input")
+   RSFATAL_IF(tau.size() != dof_, "invalid generalized force input")
   if(isFixed_) {
     // fixed body
     int i = 0;
@@ -966,12 +966,12 @@ void OdeArticulatedSystem::setGeneralizedForce(const Eigen::VectorXd &tau) {
           break;
         }
         case Joint::PRISMATIC: {
-          RAIFATAL("prismatic joint is not tested yet")
+           RSFATAL("prismatic joint is not tested yet")
           dJointAddSliderForce(joint->odeJoint_, tau[i++]);
           break;
         }
         default:
-        RAIINFO("not supported joint type")
+         RSINFO("not supported joint type")
       }
     }
   }
@@ -991,12 +991,12 @@ void OdeArticulatedSystem::setGeneralizedForce(const Eigen::VectorXd &tau) {
           break;
         }
         case Joint::PRISMATIC: {
-          RAIFATAL("prismatic joint is not tested yet")
+           RSFATAL("prismatic joint is not tested yet")
           dJointAddSliderForce(joint->odeJoint_, tau[i++]);
           break;
         }
         default:
-        RAIINFO("not supported joint type")
+         RSINFO("not supported joint type")
       }
     }
   }
@@ -1008,7 +1008,7 @@ void OdeArticulatedSystem::setState(const Eigen::VectorXd &genco, const Eigen::V
 }
 
 const benchmark::object::ArticulatedSystemInterface::EigenVec OdeArticulatedSystem::getGeneralizedForce() {
-  RAIFATAL("not implemented yet")
+   RSFATAL("not implemented yet")
   return genForce_.e();
 }
 
@@ -1065,7 +1065,7 @@ void OdeArticulatedSystem::getComRot_W(int bodyId, benchmark::Mat<3, 3> &comOrie
       comR[8], comR[9], comR[10];
 }
 
-const Eigen::Map<Eigen::Matrix<double, 3, 1>> OdeArticulatedSystem::getLinearMomentumInCartesianSpace() {
+const Eigen::Map<Eigen::Matrix<double, 3, 1>> OdeArticulatedSystem::getLinearMomentum() {
   linearMomentum_.setZero();
   for(int i = 0; i < links_.size(); i++) {
     benchmark::Vec<3> comvel;
@@ -1199,11 +1199,11 @@ void OdeArticulatedSystem::updateBodyVelocity(Link &link,
       }
       case Joint::PRISMATIC: {
         double rate = genVelocity_[childLink.parentJoint_.genvelIndex_];
-        RAIFATAL("not implemented yet");
+         RSFATAL("not implemented yet");
         break;
       }
       default:
-      RAIFATAL("currently only support revolute/prismatic/fixed joint");
+       RSFATAL("currently only support revolute/prismatic/fixed joint");
     }
 
     updateBodyVelocity(childLink, jointAngVel_w, jointLinVel_w);
@@ -1213,8 +1213,8 @@ void OdeArticulatedSystem::updateBodyVelocity(Link &link,
 }
 
 void OdeArticulatedSystem::setGeneralizedVelocity(const Eigen::VectorXd &jointVel) {
-  RAIFATAL_IF(jointVel.size() != dof_, "invalid generalized velocity input")
-  RAIWARN("direct assigning joint velocity is not tested!")
+   RSFATAL_IF(jointVel.size() != dof_, "invalid generalized velocity input")
+  RSWARN("direct assigning joint velocity is not tested!")
 
   for(int i = 0; i < dof_; i++)
     genVelocity_[i]= jointVel[i];
@@ -1245,8 +1245,8 @@ void OdeArticulatedSystem::setGeneralizedVelocity(const Eigen::VectorXd &jointVe
   }
 }
 void OdeArticulatedSystem::setGeneralizedVelocity(std::initializer_list<double> jointVel) {
-  RAIFATAL_IF(jointVel.size() != dof_, "invalid generalized velocity input")
-  RAIWARN("direct assigning joint velocity is not tested!")
+   RSFATAL_IF(jointVel.size() != dof_, "invalid generalized velocity input")
+  RSWARN("direct assigning joint velocity is not tested!")
 
   for(int i = 0; i < dof_; i++)
     genVelocity_[i]= jointVel.begin()[i];

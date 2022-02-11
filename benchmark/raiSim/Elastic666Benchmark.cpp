@@ -2,19 +2,16 @@
 // Created by kangd on 15.02.18.
 //
 
-#include <raiSim/World_RG.hpp>
+#include "raisim/World.hpp"
 
 #include "Elastic666Benchmark.hpp"
 
-rai_sim::World_RG *sim;
-std::vector<rai_sim::SingleBodyHandle> objList;
+raisim::World* sim;
+std::vector<raisim::SingleBodyObject*> objList;
 po::options_description desc;
 
 void setupSimulation() {
-  if (benchmark::elasticsixsixsix::options.gui)
-    sim = new rai_sim::World_RG(800, 600, 1, rai_sim::NO_BACKGROUND);
-  else
-    sim = new rai_sim::World_RG();
+  sim = new raisim::World();
 
   // erp
   if(benchmark::elasticsixsixsix::options.erpYN)
@@ -39,8 +36,7 @@ void setupWorld() {
   sim->setGravity({0, 0, benchmark::elasticsixsixsix::params.g});
 
   // materials
-  rai_sim::MaterialManager materials;
-  materials.setMaterialNames({"ground", "ball"});
+  raisim::MaterialManager materials;
   materials.setMaterialPairProp("ground", "ball",
                                 0, 1, 0);
   materials.setMaterialPairProp("ball", "ball",
@@ -48,11 +44,12 @@ void setupWorld() {
   sim->updateMaterialProp(materials);
 
   // random number generator
-  rai::RandomNumberGenerator<double> rand;
-  rand.seed(benchmark::elasticsixsixsix::params.randomSeed);
+  std::mt19937 gen_;
+  std::uniform_real_distribution<double> uniDist_(0., 1.);
+  gen_.seed(benchmark::elasticsixsixsix::params.randomSeed);
 
-  auto checkerboard = sim->addCheckerboard(5.0, 500.0, 500.0, 0.1, -1, rai_sim::GRID);
-  checkerboard->setMaterial(sim->getMaterialKey("ground"));
+  auto checkerboard = sim->addGround();
+  checkerboard->getCollisionObject()->material = "ground";
 
   for(int i = 0; i < benchmark::elasticsixsixsix::params.n; i++) {
     for(int j = 0; j < benchmark::elasticsixsixsix::params.n; j++) {
@@ -65,67 +62,34 @@ void setupWorld() {
         // set position
         double x =
             double(i) * benchmark::elasticsixsixsix::params.gap
-                + rand.sampleUniform01() * benchmark::elasticsixsixsix::params.perturbation;
+                + uniDist_(gen_) * benchmark::elasticsixsixsix::params.perturbation;
         double y =
             double(j) * benchmark::elasticsixsixsix::params.gap
-                + rand.sampleUniform01() * benchmark::elasticsixsixsix::params.perturbation;
+                + uniDist_(gen_) * benchmark::elasticsixsixsix::params.perturbation;
         double z =
             double(k) * benchmark::elasticsixsixsix::params.gap
-                + rand.sampleUniform01() * benchmark::elasticsixsixsix::params.perturbation
+                + uniDist_(gen_) * benchmark::elasticsixsixsix::params.perturbation
                 + benchmark::elasticsixsixsix::params.H;
 
         obj->setPosition(x, y, z);
-        obj->setMaterial(sim->getMaterialKey("ball"));
+        obj->getCollisionObject()->material = "ball";
 //        obj->setOrientationRandom();
-
-        if(benchmark::elasticsixsixsix::options.gui) {
-          if((i + j + k) % 3 == 0) {
-            obj.visual()[0]->setColor({0.5373,
-                                       0.6471,
-                                       0.3059});
-          }
-          else if((i + j + k) % 3 == 1) {
-            obj.visual()[0]->setColor({0.5373,
-                                       0.6471,
-                                       0.3059});
-          }
-          else if((i + j + k) % 3 == 2) {
-            obj.visual()[0]->setColor({0.5373,
-                                       0.6471,
-                                       0.3059});
-          }
-        }
 
         objList.push_back(obj);
       }
     }
   }
-
-  if(benchmark::elasticsixsixsix::options.gui) {
-    sim->setLightPosition((float)benchmark::elasticsixsixsix::params.lightPosition[0],
-                          (float)benchmark::elasticsixsixsix::params.lightPosition[1],
-                          (float)benchmark::elasticsixsixsix::params.lightPosition[2]);
-    sim->cameraFollowObject(objList[objList.size() / 2], {0, 5, 2});
-  }
 }
 
 double simulationLoop(bool timer = true, bool error = true) {
-  // gui
-  if(benchmark::elasticsixsixsix::options.gui && benchmark::elasticsixsixsix::options.saveVideo)
-    sim->startRecordingVideo("/tmp", "rai-666");
-
   // resever error vector
   benchmark::elasticsixsixsix::data.setN(unsigned(benchmark::elasticsixsixsix::options.T / benchmark::elasticsixsixsix::options.dt));
 
   // timer start
-  StopWatch watch;
-  if(timer)
-    watch.start();
+  std::chrono::steady_clock::time_point begin, end;
+  begin = std::chrono::steady_clock::now();
 
   for(int i = 0; i < (int) (benchmark::elasticsixsixsix::options.T / benchmark::elasticsixsixsix::options.dt); i++) {
-    if (benchmark::elasticsixsixsix::options.gui && !sim->visualizerLoop())
-      break;
-
     // data save
     if (error) {
       static double E0 = 0;
@@ -139,13 +103,8 @@ double simulationLoop(bool timer = true, bool error = true) {
     sim->integrate();
   }
 
-  if(benchmark::elasticsixsixsix::options.saveVideo)
-    sim->stopRecordingVideo();
-
-  double time = 0;
-  if(timer)
-    time = watch.measure();
-  return time;
+  end = std::chrono::steady_clock::now();
+  return double(std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count())/1.0e6;
 }
 
 int main(int argc, const char* argv[]) {
@@ -155,7 +114,7 @@ int main(int argc, const char* argv[]) {
   benchmark::elasticsixsixsix::getParamsFromYAML(benchmark::elasticsixsixsix::getYamlpath().c_str(),
                                          benchmark::RAI);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "=======================" << std::endl
                 << "Simulator: " << "RAI" << std::endl
                 << "GUI      : " << benchmark::elasticsixsixsix::options.gui << std::endl
@@ -190,7 +149,7 @@ int main(int argc, const char* argv[]) {
                                    time,
                                    error);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "CPU time   : " << time << std::endl
                 << "mean error : " << error << std::endl
                 << "=======================" << std::endl

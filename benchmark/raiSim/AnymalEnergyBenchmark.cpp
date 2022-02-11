@@ -2,19 +2,18 @@
 // Created by kangd on 14.05.18.
 //
 
-#include <raiSim/World_RG.hpp>
 
+#include "raisim/World.hpp"
 #include "AnymalEnergyBenchmark.hpp"
 
-rai_sim::World_RG *sim;
-rai_sim::ArticulatedSystemHandle anymal;
+raisim::World *sim;
+std::vector<raisim::SingleBodyObject*> objList;
 po::options_description desc;
+raisim::ArticulatedSystem* anymal;
+
 
 void setupSimulation() {
-  if(benchmark::anymal::freedrop::options.gui)
-    sim = new rai_sim::World_RG(800, 600, 0.5, rai_sim::NO_BACKGROUND);
-  else
-    sim = new rai_sim::World_RG();
+  sim = new raisim::World();
 
   // set erp 0
   sim->setERP(0);
@@ -26,12 +25,10 @@ void setupSimulation() {
 void setupWorld() {
 
   // add objects
-  auto checkerboard = sim->addCheckerboard(2, 100, 100, 0.1, -1, rai_sim::GRID);
+  auto checkerboard = sim->addGround();
 
   // anymal (internal collision disabled)
-  anymal = sim->addArticulatedSystem(
-      benchmark::anymal::freedrop::getURDFpath(), 1, 0
-  );
+  anymal = sim->addArticulatedSystem(benchmark::anymal::freedrop::getURDFpath());
   anymal->setGeneralizedCoordinate({0,
                                     0,
                                     benchmark::anymal::freedrop::params.H,
@@ -51,21 +48,9 @@ void setupWorld() {
 
   benchmark::anymal::freedrop::params.F =
       benchmark::anymal::freedrop::params.M * (-benchmark::anymal::freedrop::params.g) * 2;
-
-  if(benchmark::anymal::freedrop::options.gui) {
-    sim->cameraFollowObject(checkerboard, {25.0, 0.0, 7.0});
-
-    // color
-    for(int i = 0; i < anymal.visual().size(); i++) {
-      anymal.visual()[i]->setColor({0.5373, 0.6471, 0.3059});
-    }
-  }
 }
 
 double simulationLoop(bool timer = true, bool error = true) {
-  if(benchmark::anymal::freedrop::options.gui && benchmark::anymal::freedrop::options.saveVideo)
-    sim->startRecordingVideo("/tmp", "rai-anymal-energy");
-
   // resever error vector
   if(error)
     benchmark::anymal::freedrop::data.setN(
@@ -73,17 +58,12 @@ double simulationLoop(bool timer = true, bool error = true) {
     );
 
   // timer start
-  StopWatch watch;
-  if(timer)
-    watch.start();
+  std::chrono::steady_clock::time_point begin, end;
+  begin = std::chrono::steady_clock::now();
 
   {
     // step1: applying force
     for (int t = 0; t < (int) (benchmark::anymal::freedrop::params.T1 / benchmark::anymal::freedrop::options.dt); t++) {
-      if(benchmark::anymal::freedrop::options.gui &&
-          !sim->visualizerLoop(benchmark::anymal::freedrop::options.guiRealtimeFactor))
-        break;
-
       anymal->setGeneralizedForce({0, 0, benchmark::anymal::freedrop::params.F,
                                    0, 0, 0,
                                    0, 0, 0,
@@ -97,10 +77,6 @@ double simulationLoop(bool timer = true, bool error = true) {
   {
     // step2: freedrop
     for (int t = 0; t < (int) (benchmark::anymal::freedrop::params.T2 / benchmark::anymal::freedrop::options.dt); t++) {
-      if(benchmark::anymal::freedrop::options.gui &&
-          !sim->visualizerLoop(benchmark::anymal::freedrop::options.guiRealtimeFactor))
-        break;
-
       sim->integrate1();
 
       anymal->setGeneralizedForce({0, 0, 0,
@@ -125,10 +101,8 @@ double simulationLoop(bool timer = true, bool error = true) {
     }
   }
 
-  double time = 0;
-  if(timer)
-    time = watch.measure();
-  return time;
+  end = std::chrono::steady_clock::now();
+  return double(std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count())/1.0e6;
 }
 
 int main(int argc, const char* argv[]) {
@@ -139,8 +113,8 @@ int main(int argc, const char* argv[]) {
   benchmark::anymal::freedrop::getParamsFromYAML(benchmark::anymal::freedrop::getYamlpath().c_str(),
                                                  benchmark::RAI);
 
-  RAIINFO(
-      std::endl << "=======================" << std::endl
+  RSINFO(
+                   "\n=======================" << std::endl
                 << "Simulator  : " << "RAI" << std::endl
                 << "GUI        : " << benchmark::anymal::freedrop::options.gui << std::endl
                 << "Solver     : " << "RAI" << std::endl
@@ -172,7 +146,7 @@ int main(int argc, const char* argv[]) {
                                           time,
                                           error);
 
-  RAIINFO(
+  RSINFO(
       std::endl << "CPU Timer : " << time << std::endl
                 << "Mean Error: " << error << std::endl
                 << "======================="

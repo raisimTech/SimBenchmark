@@ -53,7 +53,7 @@ void setupSimulation() {
 
   /// no erp for dart
   if(benchmark::sixsixsix::options.erpYN)
-  RAIFATAL("erp is not supported for dart")
+   RSFATAL("erp is not supported for dart")
 }
 
 void resetWorld() {
@@ -123,7 +123,7 @@ double simulationLoop(bool timer = true, bool error = true) {
     // data save
     if (error) {
       if (benchmark::sixsixsix::options.elasticCollision) {
-        RAIFATAL("elastic collision is not supported for mujoco")
+         RSFATAL("elastic collision is not supported for mujoco")
       }
       else {
         double error = penetrationCheck();
@@ -155,9 +155,9 @@ int main(int argc, const char* argv[]) {
                                          benchmark::MUJOCO);
 
   if(benchmark::sixsixsix::options.elasticCollision)
-    RAIFATAL("Elastic 666 test is not available for MUJOCO")
+     RSFATAL("Elastic 666 test is not available for MUJOCO")
 
-  RAIINFO(
+   RSINFO(
       std::endl << "=======================" << std::endl
                 << "Simulator: MUJOCO" << std::endl
                 << "GUI      : " << benchmark::sixsixsix::options.gui << std::endl
@@ -189,7 +189,7 @@ int main(int argc, const char* argv[]) {
                                    time,
                                    error);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "CPU time   : " << time << std::endl
                 << "mean error : " << error << std::endl
                 << "=======================" << std::endl

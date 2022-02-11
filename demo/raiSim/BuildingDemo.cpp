@@ -2,16 +2,16 @@
 // Created by kangd on 09.05.18.
 //
 
-#include <raiSim/World_RG.hpp>
+#include "raisim/World.hpp"
 
 int main() {
 
   // sim
-  rai_sim::World_RG sim(1280, 720, 0.1, rai_sim::NO_BACKGROUND);
+  raisim::World_RG sim(1280, 720, 0.1, raisim::NO_BACKGROUND);
   sim.setERP(0.01);
 
   // object
-  auto checkerboard = sim.addCheckerboard(10.0, 400.0, 400.0, 0.1, 1, -1, rai_sim::GRID);
+  auto checkerboard = sim.addCheckerboard(10.0, 400.0, 400.0, 0.1, 1, -1, raisim::GRID);
 
   // build tower
   const float shortLen = 0.05;
@@ -23,7 +23,7 @@ int main() {
   const int numBase = 20;
   const int numWall = numBase / 2;
 
-  std::vector<rai_sim::SingleBodyHandle> objectPtrList;
+  std::vector<raisim::SingleBodyObject*> objectPtrList;
   for(int i = 0; i < numFloor; i++) {
     // i floor
     for(int j = 0; j < numBase; j++) {
@@ -63,7 +63,7 @@ int main() {
     objectPtrList.push_back(wall2);
   }
 
-  RAIINFO("number of blocks "<< objectPtrList.size());
+   RSINFO("number of blocks "<< objectPtrList.size());
 
   /// NOTE: dt = 0.01 is too large for realistic simulation
   const double dt = 0.001;  // (sec)

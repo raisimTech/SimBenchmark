@@ -11,7 +11,7 @@ DartArticulatedSystem::DartArticulatedSystem(std::string urdfFile) {
 
   dart::utils::DartLoader urdfLoader;
   skeletonPtr_ = urdfLoader.parseSkeleton(urdfFile);
-  RAIFATAL_IF(!skeletonPtr_, "cannot load articulated system from URDF")
+   RSFATAL_IF(!skeletonPtr_, "cannot load articulated system from URDF")
 
   // articulated system initializing
   init();
@@ -135,7 +135,7 @@ void DartArticulatedSystem::initVisual(dart::dynamics::BodyNode *body) {
     }
     else {
       // else
-      RAIFATAL("not supported shape")
+       RSFATAL("not supported shape")
     }
   }
 
@@ -195,7 +195,7 @@ void DartArticulatedSystem::initVisual(dart::dynamics::BodyNode *body) {
     }
     else {
       // else
-      RAIFATAL("not supported shape")
+       RSFATAL("not supported shape")
     }
   }
 
@@ -278,7 +278,7 @@ const benchmark::object::ArticulatedSystemInterface::EigenVec DartArticulatedSys
 }
 
 void DartArticulatedSystem::setGeneralizedCoordinate(const Eigen::VectorXd &jointState) {
-  RAIFATAL_IF(jointState.size() != stateDimension_, "invalid generalized coordinate input")
+   RSFATAL_IF(jointState.size() != stateDimension_, "invalid generalized coordinate input")
   if(isFixed_){
     // fixed base
     for(int i = 0; i < stateDimension_; i++) {
@@ -313,7 +313,7 @@ void DartArticulatedSystem::setGeneralizedCoordinate(const Eigen::VectorXd &join
 }
 
 void DartArticulatedSystem::setGeneralizedCoordinate(std::initializer_list<double> jointState) {
-  RAIFATAL_IF(jointState.size() != stateDimension_, "invalid generalized coordinate input")
+   RSFATAL_IF(jointState.size() != stateDimension_, "invalid generalized coordinate input")
   if(isFixed_){
     // fixed base
     for(int i = 0; i < stateDimension_; i++) {
@@ -348,7 +348,7 @@ void DartArticulatedSystem::setGeneralizedCoordinate(std::initializer_list<doubl
 }
 
 void DartArticulatedSystem::setGeneralizedVelocity(const Eigen::VectorXd &jointVel) {
-  RAIFATAL_IF(jointVel.size() != dof_, "invalid generalized velocity input")
+   RSFATAL_IF(jointVel.size() != dof_, "invalid generalized velocity input")
   if(isFixed_)
     skeletonPtr_->setVelocities(jointVel);
   else {
@@ -369,7 +369,7 @@ void DartArticulatedSystem::setGeneralizedVelocity(const Eigen::VectorXd &jointV
 }
 
 void DartArticulatedSystem::setGeneralizedVelocity(std::initializer_list<double> jointVel) {
-  RAIFATAL_IF(jointVel.size() != dof_, "invalid generalized velocity input")
+   RSFATAL_IF(jointVel.size() != dof_, "invalid generalized velocity input")
   if(isFixed_) {
     for(int i = 0; i < dof_; i++) {
       skeletonPtr_->setVelocity(i, jointVel.begin()[i]);
@@ -393,7 +393,7 @@ void DartArticulatedSystem::setGeneralizedVelocity(std::initializer_list<double>
 }
 
 void DartArticulatedSystem::setGeneralizedForce(std::initializer_list<double> tau) {
-  RAIFATAL_IF(tau.size() != dof_, "invalid generalized force input")
+   RSFATAL_IF(tau.size() != dof_, "invalid generalized force input")
   if(isFixed_) {
     for(int i = 0; i < dof_; i++) {
       skeletonPtr_->setForce(i, tau.begin()[i]);
@@ -415,7 +415,7 @@ void DartArticulatedSystem::setGeneralizedForce(std::initializer_list<double> ta
 }
 
 void DartArticulatedSystem::setGeneralizedForce(const Eigen::VectorXd &tau) {
-  RAIFATAL_IF(tau.size() != dof_, "invalid generalized force input")
+   RSFATAL_IF(tau.size() != dof_, "invalid generalized force input")
   if(isFixed_) {
     for(int i = 0; i < dof_; i++) {
       skeletonPtr_->setForce(i, tau[i]);
@@ -455,7 +455,7 @@ int DartArticulatedSystem::getStateDimension() {
   return stateDimension_;
 }
 
-const Eigen::Map<Eigen::Matrix<double, 3, 1>> DartArticulatedSystem::getLinearMomentumInCartesianSpace() {
+const Eigen::Map<Eigen::Matrix<double, 3, 1>> DartArticulatedSystem::getLinearMomentum() {
   double mass = skeletonPtr_->getMass();
   Eigen::Vector3d comvel = skeletonPtr_->getCOMLinearVelocity();
 

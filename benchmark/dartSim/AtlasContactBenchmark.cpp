@@ -6,7 +6,7 @@
 
 #include "AtlasContactBenchmark.hpp"
 #include "DartBenchmark.hpp"
-#include "raiCommon/utils/StopWatch.hpp"
+
 
 dart_sim::DartSim *sim;
 std::vector<dart_sim::ArticulatedSystemHandle> robots;
@@ -107,7 +107,7 @@ int main(int argc, const char* argv[]) {
   benchmark::atlas::getParamsFromYAML(benchmark::atlas::getYamlpath().c_str(),
                                       benchmark::DART);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "=======================" << std::endl
                 << "Simulator: DART" << std::endl
                 << "GUI      : " << benchmark::atlas::options.gui << std::endl

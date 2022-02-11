@@ -6,7 +6,7 @@
 
 #include "AtlasContactBenchmark.hpp"
 #include "MjcBenchmark.hpp"
-#include "raiCommon/utils/StopWatch.hpp"
+
 
 mujoco_sim::MjcSim *sim;
 po::options_description desc;
@@ -120,7 +120,7 @@ int main(int argc, const char* argv[]) {
   benchmark::atlas::getParamsFromYAML(benchmark::atlas::getYamlpath().c_str(),
                                       benchmark::MUJOCO);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "=======================" << std::endl
                 << "Simulator: MUJOCO" << std::endl
                 << "GUI      : " << benchmark::atlas::options.gui << std::endl

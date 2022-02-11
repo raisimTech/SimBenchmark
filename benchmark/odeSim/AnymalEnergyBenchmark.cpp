@@ -134,7 +134,7 @@ int main(int argc, const char* argv[]) {
   benchmark::anymal::freedrop::getParamsFromYAML(benchmark::anymal::freedrop::getYamlpath().c_str(),
                                                  benchmark::ODE);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "=======================" << std::endl
                 << "Simulator  : " << benchmark::ode::options.simName << std::endl
                 << "GUI        : " << benchmark::anymal::freedrop::options.gui << std::endl
@@ -168,7 +168,7 @@ int main(int argc, const char* argv[]) {
                                           time,
                                           error);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "CPU Timer : " << time << std::endl
                 << "Mean Error: " << error << std::endl
                 << "======================="

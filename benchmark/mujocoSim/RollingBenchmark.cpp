@@ -34,7 +34,7 @@ void setupSimulation() {
 
   /// no erp for mujoco
   if(benchmark::rolling::options.erpYN)
-  RAIFATAL("erp is not supported for mujoco")
+   RSFATAL("erp is not supported for mujoco")
 }
 
 void setupWorld() {
@@ -138,7 +138,7 @@ int main(int argc, const char* argv[]) {
   benchmark::rolling::getParamsFromYAML(benchmark::rolling::getYamlpath().c_str(),
                                         benchmark::MUJOCO);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "=======================" << std::endl
                 << "Simulator: MUJOCO" << std::endl
                 << "GUI      : " << benchmark::rolling::options.gui << std::endl
@@ -172,7 +172,7 @@ int main(int argc, const char* argv[]) {
                                  time,
                                  error);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "CPU time   : " << time << std::endl
                 << "mean error : " << error << std::endl
                 << "speed (Hz) : " << benchmark::rolling::params.T / benchmark::rolling::options.dt / time << std::endl

@@ -5,7 +5,7 @@
 #include <boost/program_options.hpp>
 
 #include "BtMbSim.hpp"
-#include "raiCommon/utils/StopWatch.hpp"
+
 
 #define URDFPATH ROOTPATH "/res/benchmark/ANYmal-PD-benchmark/bullet/robot.urdf"
 //#define VIDEO_SAVE_MODE

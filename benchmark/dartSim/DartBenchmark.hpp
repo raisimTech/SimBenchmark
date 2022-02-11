@@ -5,7 +5,7 @@
 #ifndef BENCHMARK_DARTBENCHMARK_HPP
 #define BENCHMARK_DARTBENCHMARK_HPP
 
-#include <raiCommon/rai_utils.hpp>
+
 #include "dartSim/src/DartWorld.hpp"
 
 namespace benchmark::dart {
@@ -63,7 +63,7 @@ void getOptionsFromArg(int argc, const char **argv, po::options_description &des
       options.solverName = "PGS";
     }
     else {
-      RAIFATAL("invalid solver input")
+       RSFATAL("invalid solver input")
     }
   }
 
@@ -86,7 +86,7 @@ void getOptionsFromArg(int argc, const char **argv, po::options_description &des
       options.detectorName = "DART";
     }
     else {
-      RAIFATAL("invalid detector input")
+       RSFATAL("invalid detector input")
     }
   }
 }

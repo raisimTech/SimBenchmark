@@ -2,20 +2,17 @@
 // Created by kangd on 15.02.18.
 //
 
-#include <raiSim/World_RG.hpp>
+#include "raisim/World.hpp"
 #include <valarray>
 
 #include "RollingBenchmark.hpp"
 
-rai_sim::World_RG *sim;
-std::vector<rai_sim::SingleBodyHandle> objList;
+raisim::World* sim;
+std::vector<raisim::SingleBodyObject*> objList;
 po::options_description desc;
 
 void setupSimulation() {
-  if (benchmark::rolling::options.gui)
-    sim = new rai_sim::World_RG(800, 600, 0.5, rai_sim::NO_BACKGROUND);
-  else
-    sim = new rai_sim::World_RG();
+  sim = new raisim::World();
 
   // erp
   if(benchmark::rolling::options.erpYN)
@@ -35,8 +32,7 @@ void setupSimulation() {
 void setupWorld() {
 
   // materials
-  rai_sim::MaterialManager materials;
-  materials.setMaterialNames({"ground", "box", "ball"});
+  raisim::MaterialManager materials;
   materials.setMaterialPairProp("ground", "ball",
                                 benchmark::rolling::params.raiGroundMu * benchmark::rolling::params.raiBallMu,
                                 0.0, 0.01);
@@ -49,46 +45,29 @@ void setupWorld() {
   sim->updateMaterialProp(materials);
 
   // add objects
-  auto checkerboard = sim->addCheckerboard(5.0, 100.0, 100.0, 0.1, -1, rai_sim::GRID);
-  checkerboard->setMaterial(sim->getMaterialKey("ground"));
-
-  auto box = sim->addBox(20, 20, 1, 10);
+  auto checkerboard = sim->addGround(0, "ground");
+  auto box = sim->addBox(20, 20, 1, 10, "box");
   box->setPosition(0, 0, 0.5 - benchmark::rolling::params.initPenetration);
-  box->setMaterial(sim->getMaterialKey("box"));
   objList.push_back(box);
-
-  if(benchmark::rolling::options.gui)
-    box.visual()[0]->setColor({0.5373, 0.6471, 0.3059});
 
   for(int i = 0; i < benchmark::rolling::params.n; i++) {
     for(int j = 0; j < benchmark::rolling::params.n; j++) {
-      auto ball = sim->addSphere(0.5, 1);
+      auto ball = sim->addSphere(0.5, 1, "ball");
       ball->setPosition(i * 2.0 - 4.0,
                         j * 2.0 - 4.0,
                         1.5 - 3 * benchmark::rolling::params.initPenetration);
-      ball->setMaterial(sim->getMaterialKey("ball"));
       objList.push_back(ball);
-
-      if(benchmark::rolling::options.gui)
-        ball.visual()[0]->setColor({0.5373, 0.6471, 0.3059});
     }
   }
 
   // gravity
   sim->setGravity({0, 0, benchmark::rolling::params.g});
-
-  if(benchmark::rolling::options.gui) {
-    sim->setLightPosition((float)benchmark::rolling::params.lightPosition[0],
-                          (float)benchmark::rolling::params.lightPosition[1],
-                          (float)benchmark::rolling::params.lightPosition[2]);
-    sim->cameraFollowObject(checkerboard, {30, 0, 15});
-  }
 }
 
 double simulationLoop(bool timer = true, bool error = true) {
 
   // force
-  rai_sim::Vec<3> force;
+  raisim::Vec<3> force;
   if(benchmark::rolling::options.forceDirection == benchmark::rolling::FORCE_Y)
     force = {0,
              benchmark::rolling::params.F,
@@ -102,17 +81,12 @@ double simulationLoop(bool timer = true, bool error = true) {
   benchmark::rolling::data.setN(unsigned(benchmark::rolling::params.T / benchmark::rolling::options.dt));
 
   // timer start
-  StopWatch watch;
-  if(timer)
-    watch.start();
+  std::chrono::steady_clock::time_point begin, end;
+  begin = std::chrono::steady_clock::now();
 
   for(int i = 0; i < (int) (benchmark::rolling::params.T / benchmark::rolling::options.dt); i++) {
-    // gui
-    if(benchmark::rolling::options.gui && !sim->visualizerLoop())
-      break;
-
     // set force to box
-    objList[0]->setExternalForce(force, 0);
+    objList[0]->setExternalForce(0, force);
 
     // data save
     if(error) {
@@ -126,10 +100,8 @@ double simulationLoop(bool timer = true, bool error = true) {
     sim->integrate();
   }
 
-  double time = 0;
-  if(timer)
-    time = watch.measure();
-  return time;
+  end = std::chrono::steady_clock::now();
+  return double(std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count())/1.0e6;
 }
 
 int main(int argc, const char* argv[]) {
@@ -139,7 +111,7 @@ int main(int argc, const char* argv[]) {
   benchmark::rolling::getParamsFromYAML(benchmark::rolling::getYamlpath().c_str(),
                                         benchmark::RAI);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "=======================" << std::endl
                 << "Simulator: RAI" << std::endl
                 << "GUI      : " << benchmark::rolling::options.gui << std::endl
@@ -174,7 +146,7 @@ int main(int argc, const char* argv[]) {
                                  time,
                                  error);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "CPU time   : " << time << std::endl
                 << "mean error : " << error << std::endl
                 << "speed (Hz) : " << benchmark::rolling::params.T / benchmark::rolling::options.dt / time << std::endl

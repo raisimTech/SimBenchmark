@@ -5,7 +5,7 @@
 #ifndef BENCHMARK_DARTBENCHMARK_HPP
 #define BENCHMARK_DARTBENCHMARK_HPP
 
-#include <raiCommon/rai_utils.hpp>
+
 #include <boost/program_options.hpp>
 #include "mujocoSim/src/MjcWorld.hpp"
 #include "BenchmarkTest.hpp"
@@ -86,7 +86,7 @@ void getOptionsFromArg(int argc, const char **argv, po::options_description &des
       options.solverName = "NEWTON";
     }
     else {
-      RAIFATAL("invalid solver input")
+       RSFATAL("invalid solver input")
     }
   }
 
@@ -101,7 +101,7 @@ void getOptionsFromArg(int argc, const char **argv, po::options_description &des
       options.integratorName = "RK4";
     }
     else {
-      RAIFATAL("invalid integrator input")
+       RSFATAL("invalid integrator input")
     }
   }
 

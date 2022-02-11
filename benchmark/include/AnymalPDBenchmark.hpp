@@ -5,7 +5,7 @@
 #ifndef BENCHMARK_ANYMAL_HPP
 #define BENCHMARK_ANYMAL_HPP
 
-#include <raiCommon/rai_utils.hpp>
+
 #include <yaml-cpp/yaml.h>
 #include <boost/program_options.hpp>
 
@@ -33,7 +33,7 @@ namespace benchmark::anymal {
         bool feedback = true;
 
         // # of robots = numRow x numRow
-        int numRow = 1;
+        int numRow = 10;
     };
     Option options;
 
@@ -205,7 +205,7 @@ namespace benchmark::anymal {
 
       // save video
       if(vm.count("video")) {
-        RAIFATAL_IF(!options.gui, "GUI should be on to save a video")
+         RSFATAL_IF(!options.gui, "GUI should be on to save a video")
         options.saveVideo = true;
       }
 
@@ -269,7 +269,7 @@ namespace benchmark::anymal {
         case benchmark::DART:
           break;
         default:
-        RAIFATAL("invalid simulator value")
+         RSFATAL("invalid simulator value")
       }
     }
 

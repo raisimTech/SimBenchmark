@@ -5,7 +5,7 @@
 #include <boost/program_options.hpp>
 
 #include "BtMbSim.hpp"
-#include "raiCommon/utils/StopWatch.hpp"
+
 
 #define URDFPATH ROOTPATH "/res/benchmark/ANYmal-momentum-benchmark/bullet/robot.urdf"
 //#define VIDEO_SAVE_MODE
@@ -47,7 +47,7 @@ int main(int argc, const char* argv[]) {
 
     for(int i = 0; i < 1000 && sim.visualizerLoop(0.005, 1.0); i++) {
         sim.integrate();
-        kenergy.push_back(anymal->getLinearMomentumInCartesianSpace());
+        kenergy.push_back(anymal->getLinearMomentum());
     }
 
     showplot();

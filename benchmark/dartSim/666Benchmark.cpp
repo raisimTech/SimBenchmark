@@ -55,7 +55,7 @@ void setupSimulation() {
 
   /// no erp for dart
   if(benchmark::sixsixsix::options.erpYN)
-  RAIFATAL("erp is not supported for dart")
+   RSFATAL("erp is not supported for dart")
 }
 
 void setupWorld() {
@@ -185,7 +185,7 @@ int main(int argc, const char* argv[]) {
   benchmark::sixsixsix::getParamsFromYAML(benchmark::sixsixsix::getYamlpath().c_str(),
                                          benchmark::DART);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "=======================" << std::endl
                 << "Simulator: " << benchmark::dart::options.simName << std::endl
                 << "GUI      : " << benchmark::sixsixsix::options.gui << std::endl
@@ -221,7 +221,7 @@ int main(int argc, const char* argv[]) {
                                    time,
                                    error);
 
-  RAIINFO(
+   RSINFO(
       std::endl << "CPU time   : " << time << std::endl
                 << "mean error : " << error << std::endl
                 << "=======================" << std::endl

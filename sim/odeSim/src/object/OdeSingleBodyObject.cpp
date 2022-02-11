@@ -53,7 +53,7 @@ const benchmark::eVector3 ode_sim::object::OdeSingleBodyObject::getPosition() {
 const benchmark::eVector3 ode_sim::object::OdeSingleBodyObject::getComPosition() {
   const dReal *position = dGeomGetPosition(geometry_);
   posTemp_ = {position[0], position[1], position[2]};
-  RAIWARN('check if COM = body origin!');
+  RSWARN('check if COM = body origin!');
   return posTemp_.e();
 }
 
@@ -64,7 +64,7 @@ const benchmark::eVector3 ode_sim::object::OdeSingleBodyObject::getLinearVelocit
     linVelTemp_ = {linearVelocity[0], linearVelocity[1], linearVelocity[2]};
   }
   else {
-    RAIFATAL('cannot get velocity from static object');
+     RSFATAL('cannot get velocity from static object');
   }
   return linVelTemp_.e();
 }
@@ -75,7 +75,7 @@ const benchmark::eVector3 ode_sim::object::OdeSingleBodyObject::getAngularVeloci
     angularVelocity = dBodyGetAngularVel(body_);
   }
   else {
-    RAIFATAL('cannot get velocity from static object');
+     RSFATAL('cannot get velocity from static object');
   }
   angVelTemp_ = {angularVelocity[0], angularVelocity[1], angularVelocity[2]};
   return angVelTemp_.e();
@@ -142,7 +142,7 @@ void ode_sim::object::OdeSingleBodyObject::setVelocity(double dx, double dy, dou
     dBodySetAngularVel(body_, wx, wy, wz);
   }
   else {
-    RAIFATAL('cannot set velocity to static object');
+     RSFATAL('cannot set velocity to static object');
   }
 }
 
@@ -151,7 +151,7 @@ void object::OdeSingleBodyObject::setExternalForce(Eigen::Vector3d force) {
     dBodyAddForce(body_, force[0], force[1], force[2]);
   }
   else {
-    RAIFATAL('cannot set velocity to static object');
+     RSFATAL('cannot set velocity to static object');
   }
 }
 
@@ -160,7 +160,7 @@ void object::OdeSingleBodyObject::setExternalTorque(Eigen::Vector3d torque) {
     dBodyAddTorque(body_, torque[0], torque[2], torque[2]);
   }
   else {
-    RAIFATAL('cannot set torque to static object');
+     RSFATAL('cannot set torque to static object');
   }
 }
 void object::OdeSingleBodyObject::setRestitutionCoefficient(double restitution) {
@@ -186,7 +186,7 @@ double object::OdeSingleBodyObject::getKineticEnergy() {
     angularVelocity = dBodyGetAngularVel(body_);
   }
   else {
-    RAIFATAL('cannot get velocity from static object');
+     RSFATAL('cannot get velocity from static object');
   }
 
   // cal kinetic energy
@@ -232,7 +232,7 @@ const benchmark::eVector3 object::OdeSingleBodyObject::getLinearMomentum() {
                     linearVelocity[2] * mass_.mass};
   }
   else {
-    RAIFATAL('cannot get velocity from static object');
+     RSFATAL('cannot get velocity from static object');
   }
   return linMomentum_.e();
 }

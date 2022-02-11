@@ -41,17 +41,14 @@ endif()
 ########################################################################################################################
 # options
 option(RAISIM "benchmark raiSim" ON)
-option(BULLET "benchmark Bullet Multibody(bullet3 API)" ON)
-option(ODE "benchmark ODE" ON)
-option(MUJOCO "benchmark MUJOCO" ON)
-option(DART "benchmark DART" ON)
+option(BULLET "benchmark Bullet Multibody(bullet3 API)" OFF)
+option(ODE "benchmark ODE" OFF)
+option(MUJOCO "benchmark MUJOCO" OFF)
+option(DART "benchmark DART" OFF)
 
-option(BUILD_DEMO "build demos" ON)
-option(BUILD_TEST "build tests" ON)
+option(BUILD_DEMO "build demos" OFF)
+option(BUILD_TEST "build tests" OFF)
 option(BUILD_BENCHMARK "build benchmark tests" ON)
-
-# backend of raiSim: "ODE" or "BULLET"
-set(RAISIM_BACKEND "ODE")
 
 
 ########################################################################################################################
@@ -90,10 +87,6 @@ include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 find_package(Boost COMPONENTS system filesystem program_options REQUIRED)
 include_directories(SYSTEM ${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
-
-# external projects
-# this libraries will be installed in the build directory
-add_subdirectory(lib)
 
 ########################################################################################################################
 # macro variable

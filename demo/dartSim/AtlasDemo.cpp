@@ -3,7 +3,7 @@
 //
 #include <DartSim.hpp>
 #include <string>
-#include "raiCommon/utils/StopWatch.hpp"
+
 
 int main() {
 

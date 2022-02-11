@@ -166,7 +166,7 @@ class BtMbArticulatedSystem : public benchmark::object::ArticulatedSystemInterfa
   /**
    * deprecated
    */
-  void setColor(Eigen::Vector4d color) override {RAIFATAL("setColor is deprecated function")};
+  void setColor(Eigen::Vector4d color) override { RSFATAL("setColor is deprecated function")};
 
   /**
    * Get total mass of the robot
@@ -202,7 +202,7 @@ class BtMbArticulatedSystem : public benchmark::object::ArticulatedSystemInterfa
    *
    * @return    3D output vector of linear momentum
    */
-  const Eigen::Map<Eigen::Matrix<double, 3, 1>> getLinearMomentumInCartesianSpace() override;
+  const Eigen::Map<Eigen::Matrix<double, 3, 1>> getLinearMomentum() override;
 
   /**
    * Setter for restitution coefficient (every link)

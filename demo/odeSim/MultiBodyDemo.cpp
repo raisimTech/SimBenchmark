@@ -30,8 +30,8 @@ int main() {
         sim.integrate(0.005);
     }
 
-    RAIINFO("generalized coordinate = " << std::endl << robot->getGeneralizedCoordinate());
-    RAIINFO("generalized velocity = " << std::endl << robot->getGeneralizedVelocity());
+     RSINFO("generalized coordinate = " << std::endl << robot->getGeneralizedCoordinate());
+     RSINFO("generalized velocity = " << std::endl << robot->getGeneralizedVelocity());
 
     return 0;
 }

@@ -39,7 +39,7 @@ int main() {
     sim.integrate2();
   }
 
-  RAIINFO(sim.getSingleBodyHandle(1)->getLinearVelocity())
+   RSINFO(sim.getSingleBodyHandle(1)->getLinearVelocity())
 
   return 0;
 }

@@ -5,7 +5,6 @@
 #ifndef BENCHMARK_ANYMALMOMENTUMBENCHMARK_HPP
 #define BENCHMARK_ANYMALMOMENTUMBENCHMARK_HPP
 
-#include <raiCommon/rai_utils.hpp>
 #include <boost/program_options.hpp>
 #include <yaml-cpp/yaml.h>
 
@@ -63,33 +62,6 @@ namespace benchmark::anymal::zerogravity {
 
           for(int i = 0; i < n; i++) {
             momentumErrorSq(i, 0) = pow((ballMomentum[i] + anymalMomentum[i] - momentum).norm(),2);
-          }
-
-          if(options.plot) {
-            Eigen::MatrixXd tdata(n, 1);        // time
-            Eigen::MatrixXd bMdata(n, 1);        // ball momentum y
-            Eigen::MatrixXd aMdata(n, 1);        // anymal momentum y
-            Eigen::MatrixXd tMdata(n, 1);        // total momentum y
-
-            for(int i = 0; i < n; i++) {
-              tdata(i, 0) = i * options.dt;
-              bMdata(i, 0) = ballMomentum[i].y();
-              aMdata(i, 0) = anymalMomentum[i].y();
-              tMdata(i, 0) = (ballMomentum[i] + anymalMomentum[i]).y();
-            }
-
-            rai::Utils::Graph::FigProp2D figure1properties("time", "squared momentum error", "squared momentum error");
-            rai::Utils::graph->figure(1, figure1properties);
-            rai::Utils::graph->appendData(1, tdata.data(), momentumErrorSq.data(), n, "error norm sq");
-            rai::Utils::graph->drawFigure(1);
-
-            rai::Utils::Graph::FigProp2D figure2properties("time", "momentum", "momentum");
-            rai::Utils::graph->figure(2, figure2properties);
-            rai::Utils::graph->appendData(2, tdata.data(), bMdata.data(), n, "ball momentum");
-            rai::Utils::graph->appendData(2, tdata.data(), aMdata.data(), n, "anymal momentum");
-            rai::Utils::graph->appendData(2, tdata.data(), tMdata.data(), n, "total momentum");
-            rai::Utils::graph->drawFigure(2);
-            rai::Utils::graph->waitForEnter();
           }
 
           return momentumErrorSq.mean();
@@ -248,7 +220,7 @@ namespace benchmark::anymal::zerogravity {
 
       // save video
       if(vm.count("video")) {
-        RAIFATAL_IF(!options.gui, "GUI should be on to save a video")
+         RSFATAL_IF(!options.gui, "GUI should be on to save a video")
         options.saveVideo = true;
       }
 
@@ -308,7 +280,7 @@ namespace benchmark::anymal::zerogravity {
         case benchmark::DART:
           break;
         default:
-        RAIFATAL("invalid simulator value")
+          RSFATAL("invalid simulator value")
       }
     }
 
